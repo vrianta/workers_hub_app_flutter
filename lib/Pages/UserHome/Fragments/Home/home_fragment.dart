@@ -21,6 +21,7 @@ class _HomeFragmentState extends State<HomeFragment> {
   bool isRefreshing = false;
   EventHandler events = EventHandler();
   late Future<List<Widget>> eventCardsTypeFuture;
+  double previousOffset = 0;
 
   final ScrollController catagoryScrollController = ScrollController();
 
@@ -28,20 +29,6 @@ class _HomeFragmentState extends State<HomeFragment> {
   void initState() {
     super.initState();
     events.loadData();
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      widget.listViewController.addListener(() {
-        if (widget.listViewController.offset == 0) {
-          widget.singleChildScrollViewController.animateTo(0,
-              duration: const Duration(microseconds: 100),
-              curve: Curves.linear);
-        } else {
-          widget.singleChildScrollViewController.animateTo(10,
-              duration: const Duration(microseconds: 100),
-              curve: Curves.linear);
-        }
-      });
-    });
   }
 
   @override
@@ -49,14 +36,35 @@ class _HomeFragmentState extends State<HomeFragment> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar(),
-      body: RefreshIndicator(
-        onRefresh: _refreshPage,
-        color: Colors.blueAccent,
-        child: SingleChildScrollView(
-          controller: widget.singleChildScrollViewController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification notification) {
+          final currentOffset = widget.listViewController.offset;
+
+          if (currentOffset < previousOffset) {
+            // User swiped up, scrolling up
+            widget.singleChildScrollViewController.animateTo(
+              getScrollOffset(),
+              duration: Duration(milliseconds: 100),
+              curve: Curves.easeOut,
+            );
+          } else if (currentOffset > previousOffset) {
+            // User swiped down, scrolling down
+            widget.singleChildScrollViewController.animateTo(
+              getScrollOffset(),
+              duration: Duration(milliseconds: 100),
+              curve: Curves.easeOut,
+            );
+          }
+
+          previousOffset = currentOffset;
+          return true;
+        },
+        child: RefreshIndicator(
+          onRefresh: _refreshPage,
+          color: Colors.blueAccent,
+          child: ListView(
+            controller: widget.singleChildScrollViewController,
+            physics: const AlwaysScrollableScrollPhysics(),
             children: [
               const SizedBox(height: 8),
               const HeadingTextView(data: "Category"),
@@ -71,6 +79,35 @@ class _HomeFragmentState extends State<HomeFragment> {
         ),
       ),
     );
+  }
+
+  double getScrollOffset() {
+    // For upward swipe: Decrease the scroll offset slightly
+    if (widget.listViewController.offset < previousOffset &&
+        widget.singleChildScrollViewController.offset > 0) {
+      return (widget.singleChildScrollViewController.offset - 50).clamp(
+          0, widget.singleChildScrollViewController.position.maxScrollExtent);
+    }
+
+    // For downward swipe: Increase the scroll offset slightly
+    if (widget.listViewController.offset > previousOffset) {
+      return (widget.singleChildScrollViewController.offset + 50).clamp(
+          0, widget.singleChildScrollViewController.position.maxScrollExtent);
+    }
+
+    // Default case: Return current offset
+    return widget.singleChildScrollViewController.offset;
+  }
+
+  double getScrollOffsetOnScrollDown() {
+    if (widget.singleChildScrollViewController.offset !=
+            widget.singleChildScrollViewController.position.minScrollExtent &&
+        widget.singleChildScrollViewController.offset <=
+            widget.singleChildScrollViewController.position.maxScrollExtent) {
+      return widget.singleChildScrollViewController.offset - 1;
+    }
+
+    return widget.singleChildScrollViewController.position.minScrollExtent;
   }
 
   FutureBuilder<List<Widget>> categoryContainer() {
