@@ -25,7 +25,7 @@ var loginButton = (BuildContext context,
       ),
     );
 
-void onpressedLoginButton(
+Future<bool> onpressedLoginButton(
     BuildContext context,
     TextEditingController userNameController,
     TextEditingController passwordController) async {
@@ -35,15 +35,20 @@ void onpressedLoginButton(
   if (isUserNameOrPasswordEmpty(userName, password)) {
     showToast("User Name and Password Field Can't be empty",
         const Color.fromARGB(146, 250, 7, 7));
-    return;
+    return false;
   }
   ApiHandler apiHandler = ApiHandler();
   await apiHandler.login(userName, password);
   var responseObj = jsonDecode(apiHandler.response);
 
+  if (responseObj["CODE"] == "RELOGIN") {
+    showToast(responseObj["CODE"], Colors.red);
+    ApiHandler.cookieHeader = "";
+    return false;
+  }
   if (responseObj["CODE"] != "LOGINDETAILS") {
     showToast(responseObj["CODE"], Colors.red);
-    return;
+    return false;
   }
 
   var loginDetails = jsonDecode(responseObj["MESSAGE"]);
@@ -60,6 +65,8 @@ void onpressedLoginButton(
     context,
     MaterialPageRoute(builder: (context) => Home()),
   );
+
+  return true;
 }
 
 bool isUserNameOrPasswordEmpty(String userName, String password) {
