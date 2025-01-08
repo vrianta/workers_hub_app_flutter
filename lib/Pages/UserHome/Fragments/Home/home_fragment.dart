@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Components/all_events_view.dart';
+import 'package:wo1/Pages/UserHome/Fragments/Home/Components/details_of_event.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Components/event_catagory_view.dart';
-import 'package:wo1/Pages/UserHome/Fragments/Home/Components/events.dart';
+import 'package:wo1/Models/events.dart';
+import 'package:wo1/Pages/UserHome/Fragments/Home/Components/event_handler.dart';
 import 'package:wo1/Widget/catagory_textview.dart';
 
 class HomeFragment extends StatefulWidget {
@@ -14,13 +16,12 @@ class HomeFragment extends StatefulWidget {
       super.key});
 
   @override
-  State<HomeFragment> createState() => _HomeFragmentState();
+  State<HomeFragment> createState() => _MainPage();
 }
 
-class _HomeFragmentState extends State<HomeFragment> {
+class _MainPage extends State<HomeFragment> {
   bool isRefreshing = false;
-  EventHandler events = EventHandler();
-  late Future<List<Widget>> eventCardsTypeFuture;
+  late EventHandler events;
   double previousOffset = 0;
 
   final ScrollController catagoryScrollController = ScrollController();
@@ -28,16 +29,26 @@ class _HomeFragmentState extends State<HomeFragment> {
   @override
   void initState() {
     super.initState();
+
+    events = EventHandler(showEventDetails: showEventDetails);
     events.loadData();
   }
 
   @override
   Widget build(BuildContext context) {
+    return mainPageView();
+  }
+
+  Scaffold mainPageView() {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar(),
       body: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification notification) {
+          // widget.listViewController.hasClients
+          if (!widget.listViewController.hasClients) {
+            return false;
+          }
           final currentOffset = widget.listViewController.offset;
 
           if (currentOffset < previousOffset) {
@@ -69,73 +80,20 @@ class _HomeFragmentState extends State<HomeFragment> {
               const SizedBox(height: 8),
               const HeadingTextView(data: "Category"),
               const SizedBox(height: 8),
-              categoryContainer(),
+              EventsCatagoryView(
+                  events: events,
+                  catagoryScrollController: catagoryScrollController),
               const SizedBox(height: 8),
               const HeadingTextView(data: "All Events"),
               const SizedBox(height: 8),
-              AllEventsView(events: events, widget: widget),
+              AllEventsView(
+                events: events,
+                listViewController: widget.listViewController,
+              ),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  double getScrollOffset() {
-    // For upward swipe: Decrease the scroll offset slightly
-    if (widget.listViewController.offset < previousOffset &&
-        widget.singleChildScrollViewController.offset > 0) {
-      return (widget.singleChildScrollViewController.offset - 50).clamp(
-          0, widget.singleChildScrollViewController.position.maxScrollExtent);
-    }
-
-    // For downward swipe: Increase the scroll offset slightly
-    if (widget.listViewController.offset > previousOffset) {
-      return (widget.singleChildScrollViewController.offset + 50).clamp(
-          0, widget.singleChildScrollViewController.position.maxScrollExtent);
-    }
-
-    // Default case: Return current offset
-    return widget.singleChildScrollViewController.offset;
-  }
-
-  double getScrollOffsetOnScrollDown() {
-    if (widget.singleChildScrollViewController.offset !=
-            widget.singleChildScrollViewController.position.minScrollExtent &&
-        widget.singleChildScrollViewController.offset <=
-            widget.singleChildScrollViewController.position.maxScrollExtent) {
-      return widget.singleChildScrollViewController.offset - 1;
-    }
-
-    return widget.singleChildScrollViewController.position.minScrollExtent;
-  }
-
-  FutureBuilder<List<Widget>> categoryContainer() {
-    return FutureBuilder<List<Widget>>(
-      future: events.getEventTypeCards(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (snapshot.hasError) {
-          return const Center(
-            child: Text("Error loading event types"),
-          );
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(
-            child: Text("No Event Type Found"),
-          );
-        }
-
-        List<Widget>? eventTypesCards = snapshot.data;
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: EventCatagoryView(
-              catagoryScrollController: catagoryScrollController,
-              eventTypesCards: eventTypesCards),
-        );
-      },
     );
   }
 
@@ -144,6 +102,7 @@ class _HomeFragmentState extends State<HomeFragment> {
       key: const Key("AppBar"),
       elevation: 0,
       title: Container(
+        // Add padding to prevent text from touching edges
         decoration: const BoxDecoration(color: Colors.white),
         child: TextField(
           decoration: InputDecoration(
@@ -174,6 +133,24 @@ class _HomeFragmentState extends State<HomeFragment> {
     );
   }
 
+  double getScrollOffset() {
+    // For upward swipe: Decrease the scroll offset slightly
+    if (widget.listViewController.offset < previousOffset &&
+        widget.singleChildScrollViewController.offset > 0) {
+      return (widget.singleChildScrollViewController.offset - 50).clamp(
+          0, widget.singleChildScrollViewController.position.maxScrollExtent);
+    }
+
+    // For downward swipe: Increase the scroll offset slightly
+    if (widget.listViewController.offset > previousOffset) {
+      return (widget.singleChildScrollViewController.offset + 50).clamp(
+          0, widget.singleChildScrollViewController.position.maxScrollExtent);
+    }
+
+    // Default case: Return current offset
+    return widget.singleChildScrollViewController.offset;
+  }
+
   Future<void> _refreshPage() async {
     setState(() {
       events.clear();
@@ -183,5 +160,21 @@ class _HomeFragmentState extends State<HomeFragment> {
     setState(() {
       events.loadData();
     });
+  }
+
+  void showEventDetails(Event event) {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (BuildContext context) {
+          return Container(
+            padding: const EdgeInsets.all(16.0),
+            height: 600,
+            child: EventDetailsPage(
+              event: event,
+              onClose: () => {Navigator.pop(context), _refreshPage()},
+            ),
+          );
+        });
   }
 }

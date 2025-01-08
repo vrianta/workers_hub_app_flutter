@@ -53,29 +53,35 @@ class ApiHandler {
   }
 
   // Get applied events method
-  Future<void> getAppliedEvents() async {
+  Future<String> getAppliedEvents() async {
     await _initResponse("get-applied-events", {
       "uid": uid,
       "token": api_token,
     });
+
+    return response;
   }
 
   // Apply to an event method
-  Future<void> applyToEvent(String eventId) async {
+  Future<String> applyToEvent(String eventId) async {
     await _initResponse("apply-to-event", {
       "uid": uid,
       "token": api_token,
       "eventid": eventId,
     });
+
+    return response;
   }
 
   // Withdraw from an event method
-  Future<void> withdrawFromEvent(String eventId) async {
+  Future<String> withdrawFromEvent(String eventId) async {
     await _initResponse("withdraw-from-event", {
       "uid": uid,
       "token": api_token,
       "eventid": eventId,
     });
+
+    return response;
   }
 
   // Private method to handle HTTP POST request

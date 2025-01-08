@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:wo1/Pages/UserHome/Fragments/Home/Components/events.dart';
-import 'package:wo1/Pages/UserHome/Fragments/Home/home_fragment.dart';
+import 'package:wo1/Pages/UserHome/Fragments/Home/Components/event_handler.dart';
 
 class AllEventsView extends StatelessWidget {
   const AllEventsView({
     super.key,
     required this.events,
-    required this.widget,
+    required this.listViewController,
   });
 
   final EventHandler events;
-  final HomeFragment widget;
+  final ScrollController listViewController;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +36,7 @@ class AllEventsView extends StatelessWidget {
           child: SizedBox(
             height: MediaQuery.of(context).size.height,
             child: ListView.separated(
-              controller: widget.listViewController,
+              controller: listViewController,
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
               itemCount: eventCards!.length,

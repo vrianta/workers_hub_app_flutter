@@ -12,8 +12,18 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final TextEditingController userNameController = TextEditingController();
-
   final TextEditingController passwordController = TextEditingController();
+
+  late LoginButton loginButton;
+
+  @override
+  void initState() {
+    super.initState();
+    loginButton = LoginButton(
+      userNameController: userNameController,
+      passwordCotroller: passwordController,
+    );
+  }
 
   // ignore: empty_constructor_bodies
   @override
@@ -54,8 +64,7 @@ class _LoginState extends State<Login> {
                     children: [
                       usernameTextField(userNameController),
                       passwordTextField(passwordController),
-                      loginButton(
-                          context, userNameController, passwordController)
+                      loginButton
                     ],
                   ),
                 ),
@@ -68,7 +77,7 @@ class _LoginState extends State<Login> {
   }
 
   Future<bool> loadStoredCreds(BuildContext context) async {
-    final storage = FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
 
     // Await the future to get the actual value
     String? username = await storage.read(key: "username");
@@ -78,11 +87,14 @@ class _LoginState extends State<Login> {
     userNameController.text = username ?? ''; // Default to empty if null
     passwordController.text = password ?? ''; // Default to empty if null
 
-    Future.delayed(const Duration(seconds: 20));
     if (username != null && password != null) {
       // ignore: use_build_context_synchronously
       return onpressedLoginButton(
-          context, userNameController, passwordController);
+        // ignore: use_build_context_synchronously
+        context,
+        userNameController,
+        passwordController,
+      );
     }
 
     return false;

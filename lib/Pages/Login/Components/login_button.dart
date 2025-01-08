@@ -6,12 +6,29 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wo1/ApiHandler/api_handler.dart';
 import 'package:wo1/Pages/UserHome/home.dart';
 
-var loginButton = (BuildContext context,
-        TextEditingController userNameController,
-        TextEditingController passwordCotroller) =>
-    ElevatedButton(
-      onPressed: () =>
-          onpressedLoginButton(context, userNameController, passwordCotroller),
+class LoginButton extends StatefulWidget {
+  final TextEditingController userNameController;
+  final TextEditingController passwordCotroller;
+
+  const LoginButton({
+    required this.userNameController,
+    required this.passwordCotroller,
+    super.key,
+  });
+
+  @override
+  State<LoginButton> createState() => _LoginButtonState();
+}
+
+class _LoginButtonState extends State<LoginButton> {
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => onpressedLoginButton(
+        context,
+        widget.userNameController,
+        widget.passwordCotroller,
+      ),
       style: ElevatedButton.styleFrom(
         backgroundColor: Color(0xFF6200EE),
         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -24,6 +41,8 @@ var loginButton = (BuildContext context,
         style: TextStyle(fontSize: 18, color: Colors.white),
       ),
     );
+  }
+}
 
 Future<bool> onpressedLoginButton(
     BuildContext context,
@@ -52,14 +71,13 @@ Future<bool> onpressedLoginButton(
   }
 
   var loginDetails = jsonDecode(responseObj["MESSAGE"]);
-
   ApiHandler.api_token = loginDetails["token"];
   ApiHandler.accountType = loginDetails["accountType"];
   ApiHandler.uid = userName;
+
   showToast("Logged in successfully", Colors.green);
   storeCreds(userName, password);
 
-  // Navigator.pop(context);
   Navigator.pushReplacement(
     // ignore: use_build_context_synchronously
     context,

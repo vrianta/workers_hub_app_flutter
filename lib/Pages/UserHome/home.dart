@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:wo1/Alerts/one_exit.dart';
 import 'package:wo1/Pages/UserHome/Components/buttom_navigation.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/home_fragment.dart';
-import 'package:wo1/Pages/UserHome/Fragments/accounts_fragment.dart';
-import 'package:wo1/Pages/UserHome/Fragments/dashboard_fragment.dart';
+import 'package:wo1/Pages/UserHome/Fragments/Accounts/accounts_fragment.dart';
+import 'package:wo1/Pages/UserHome/Fragments/Dashboard/dashboard_fragment.dart';
 import 'package:wo1/Pages/UserHome/Fragments/groups_fragment.dart';
 
 class Home extends StatefulWidget {
@@ -20,10 +20,30 @@ class _HomeState extends State<Home> {
 
   final PageController _pageController = PageController();
 
+  late HomeFragment homeFragment;
+  late DashboardFragement dashboardFragement;
+  late GroupsFragement groupsFragement;
+  late AccountsFragement accountsFragement;
+
+  dynamic pageToShow;
+
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    homeFragment = HomeFragment(
+      listViewController: listViewController,
+      singleChildScrollViewController: singleChildScrollViewController,
+    );
+    dashboardFragement = DashboardFragement();
+    groupsFragement = GroupsFragement();
+    accountsFragement = AccountsFragement();
   }
 
   @override
@@ -50,13 +70,10 @@ class _HomeState extends State<Home> {
           controller: _pageController,
           physics: const AlwaysScrollableScrollPhysics(), // Disable swipe
           children: [
-            HomeFragment(
-              listViewController: listViewController,
-              singleChildScrollViewController: singleChildScrollViewController,
-            ),
-            DashboardFragement(),
-            GroupsFragement(),
-            AccountsFragement(),
+            homeFragment,
+            dashboardFragement,
+            groupsFragement,
+            accountsFragement,
           ],
         ),
       ),
@@ -66,6 +83,7 @@ class _HomeState extends State<Home> {
   // Exit confirmation dialog
   void exitConfirmation() {
     bool isScrollJumping = false;
+
     if (currentIndex > 0) {
       setState(() {
         currentIndex = 0;

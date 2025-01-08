@@ -2,58 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:wo1/ApiHandler/api_handler.dart';
-
-class Event {
-  final String eventID;
-  final String eventType;
-  final int eventRequirement;
-  final int eventBudget;
-  final String? eventMinimumHeight;
-  final int? eventMinimumRating;
-  final int? eventMinimumAge;
-  final String eventDate;
-  final String eventTime;
-  final bool foodProvided;
-  final String? eventLanguage;
-  final String eventLocation;
-  final String ownerID;
-
-  Event({
-    required this.eventID,
-    required this.eventType,
-    required this.eventRequirement,
-    required this.eventBudget,
-    this.eventMinimumHeight,
-    this.eventMinimumRating,
-    this.eventMinimumAge,
-    required this.eventDate,
-    required this.eventTime,
-    required this.foodProvided,
-    this.eventLanguage,
-    required this.eventLocation,
-    required this.ownerID,
-  });
-
-  // Factory constructor to create an Event from a JSON object
-  factory Event.fromJson(Map<String, dynamic> json) {
-    return Event(
-      eventID: json['EventID'],
-      eventType: json['Type'],
-      eventRequirement: json['Requirement'],
-      eventBudget: json['Budget'],
-      eventMinimumHeight: json['MinimumHeight'],
-      eventMinimumRating: json['MinimumRating'],
-      eventMinimumAge: json['MinimumAge'],
-      eventDate: json['Date'],
-      eventTime: json['Time'],
-      foodProvided:
-          json['FoodProvided'] == 1, // Assuming 1 means true and 0 means false
-      eventLanguage: json['Language'],
-      eventLocation: json['Location'],
-      ownerID: json['OwnerID'],
-    );
-  }
-}
+import 'package:wo1/Models/events.dart';
 
 class EventHandler {
   ApiHandler apiHandler = ApiHandler();
@@ -64,6 +13,9 @@ class EventHandler {
   Color bgColor = Colors.white;
 
   Map<String, List<Event>> groupedEvents = {};
+  final Function(Event) showEventDetails;
+
+  EventHandler({required this.showEventDetails});
 
   Future<void> loadData() async {
     await getEventData();
@@ -81,6 +33,14 @@ class EventHandler {
         events = responseEvents.map((json) => Event.fromJson(json)).toList();
       }
     }
+
+    // Sorting the events by eventDate asynchronously
+    events.sort((a, b) {
+      DateTime dateA = DateTime.parse(
+          a.eventDate); // assuming eventDate is in a valid format
+      DateTime dateB = DateTime.parse(b.eventDate);
+      return dateA.compareTo(dateB); // Sort by ascending date
+    });
 
     isEventsFetched = true;
   }
@@ -121,72 +81,74 @@ class EventHandler {
       ); // Non-blocking wait
     }
     return events.map((event) {
-      return SizedBox(
+      return GestureDetector(
+          onTap: () => {showEventDetails(event)},
+          key: Key(event.eventID),
           child: Card(
-        elevation: 5,
-        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Event Type
-              Text(
-                event.eventType,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blue,
-                ),
-              ),
-              SizedBox(height: 8),
+            elevation: 5,
+            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Event Type
+                  Text(
+                    event.eventType,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  SizedBox(height: 8),
 
-              // Event Location
-              Text(
-                'Location: ${event.eventLocation}',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black54,
-                ),
-              ),
-              SizedBox(height: 8),
+                  // Event Location
+                  Text(
+                    'Location: ${event.eventLocation}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  SizedBox(height: 8),
 
-              // Event Date and Time
-              Text(
-                'Date: ${event.eventDate} | Time: ${event.eventTime}',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black54,
-                ),
-              ),
-              SizedBox(height: 8),
+                  // Event Date and Time
+                  Text(
+                    'Date: ${event.eventDate} | Time: ${event.eventTime}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  SizedBox(height: 8),
 
-              // Event Requirement
-              Text(
-                'Requirement: ${event.eventRequirement} people',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black54,
-                ),
-              ),
-              SizedBox(height: 8),
+                  // Event Requirement
+                  Text(
+                    'Requirement: ${event.eventRequirement} people',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  SizedBox(height: 8),
 
-              // Event Budget
-              Text(
-                'Budget: \$${event.eventBudget}',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
-                ),
+                  // Event Budget
+                  Text(
+                    'Budget: \$${event.eventBudget}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-      ));
+            ),
+          ));
     }).toList();
   }
 
