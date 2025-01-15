@@ -20,10 +20,10 @@ class _HomeState extends State<Home> {
 
   final PageController _pageController = PageController();
 
-  late HomeFragment homeFragment;
-  late DashboardFragement dashboardFragement;
-  late GroupsFragement groupsFragement;
-  late AccountsFragement accountsFragement;
+  late final HomeFragment homeFragment;
+  late final DashboardFragement dashboardFragement;
+  late final GroupsFragement groupsFragement;
+  late final AccountsFragment accountsFragement;
 
   dynamic pageToShow;
 
@@ -43,7 +43,9 @@ class _HomeState extends State<Home> {
     );
     dashboardFragement = DashboardFragement();
     groupsFragement = GroupsFragement();
-    accountsFragement = AccountsFragement();
+    accountsFragement = AccountsFragment(
+      isBusinessUser: false,
+    );
   }
 
   @override
@@ -68,7 +70,7 @@ class _HomeState extends State<Home> {
         onPopInvokedWithResult: (c, result) async => {exitConfirmation()},
         child: PageView(
           controller: _pageController,
-          physics: const AlwaysScrollableScrollPhysics(), // Disable swipe
+          physics: const NeverScrollableScrollPhysics(), // Disable swipe
           children: [
             homeFragment,
             dashboardFragement,

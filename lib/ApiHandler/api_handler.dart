@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:wo1/Models/user_details.dart';
 
 final storage = FlutterSecureStorage(); // Create a storage instance
 
@@ -15,6 +16,19 @@ class ApiHandler {
   static String api_token = '';
   static String uid = '';
   static String accountType = '';
+  static UserDetails userDetails = UserDetails(
+    userId: "userId",
+    fullName: "fullName",
+    phoneNumber: "phoneNumber",
+    photoUrl: "photoUrl",
+    rating: 0,
+    experienceYear: 0,
+    workDone: 0,
+    dateOfBirth: "dateOfBirth",
+    height: "height",
+    age: 0,
+    gender: "",
+  );
 
   // Login method
   Future<String> login(String userid, String password) async {
@@ -81,6 +95,20 @@ class ApiHandler {
       "eventid": eventId,
     });
 
+    return response;
+  }
+
+  // Login method
+  Future<String> updateUser(String fullName, String phoneNumber, dateOfBirth,
+      height, String text) async {
+    await _initResponse("update-user", {
+      "uid": uid,
+      "token": api_token,
+      "full_name": fullName,
+      "phone_number": phoneNumber,
+      "data_of_birth": dateOfBirth,
+      "height": height,
+    });
     return response;
   }
 

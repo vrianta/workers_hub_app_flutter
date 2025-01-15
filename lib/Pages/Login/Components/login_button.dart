@@ -73,6 +73,7 @@ Future<bool> onpressedLoginButton(
   var loginDetails = jsonDecode(responseObj["MESSAGE"]);
   ApiHandler.api_token = loginDetails["token"];
   ApiHandler.accountType = loginDetails["accountType"];
+  ApiHandler.userDetails.fromJson(jsonDecode(loginDetails["user_details"])[0]);
   ApiHandler.uid = userName;
 
   showToast("Logged in successfully", Colors.green);

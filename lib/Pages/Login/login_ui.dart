@@ -25,6 +25,13 @@ class _LoginState extends State<Login> {
     );
   }
 
+  @override
+  void dispose() {
+    userNameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   // ignore: empty_constructor_bodies
   @override
   Widget build(BuildContext context) {
@@ -35,11 +42,12 @@ class _LoginState extends State<Login> {
           return MaterialApp(
             home: Scaffold(
               body: Center(
-                  widthFactor: 10,
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.amber,
-                    color: Colors.black,
-                  )), // Show loading while waiting for the result
+                widthFactor: 10,
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.amber,
+                  color: Colors.black,
+                ),
+              ), // Show loading while waiting for the result
             ),
           );
         }

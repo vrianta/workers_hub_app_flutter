@@ -29,48 +29,45 @@ class _DashboardFragementState extends State<DashboardFragement> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: RefreshIndicator(
-          onRefresh: _refreshPage,
-          color: Colors.blueAccent,
-          child: FutureBuilder<List<Widget>>(
-            future: events.getEventCards(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasError) {
-                return const Center(
-                  child: Text("Error loading event types"),
-                );
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(
-                  child: Text("No Event Type Found"),
-                );
-              }
-
-              List<Widget>? eventCards = snapshot.data;
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    itemCount: eventCards!.length,
-                    separatorBuilder: (context, index) {
-                      return SizedBox(height: 10);
-                    },
-                    itemBuilder: (context, index) {
-                      return eventCards[index];
-                    },
-                  ),
-                ),
+      body: RefreshIndicator(
+        onRefresh: _refreshPage,
+        color: Colors.blueAccent,
+        child: FutureBuilder<List<Widget>>(
+          future: events.getEventCards(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
               );
-            },
-          ),
+            } else if (snapshot.hasError) {
+              return const Center(
+                child: Text("Error loading event types"),
+              );
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(
+                child: Text("No Event Type Found"),
+              );
+            }
+
+            List<Widget>? eventCards = snapshot.data;
+            return Padding(
+              padding: const EdgeInsets.symmetric(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height,
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  itemCount: eventCards!.length,
+                  separatorBuilder: (context, index) {
+                    return SizedBox(height: 0);
+                  },
+                  itemBuilder: (context, index) {
+                    return eventCards[index];
+                  },
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -92,7 +89,7 @@ class _DashboardFragementState extends State<DashboardFragement> {
       events.clear();
     });
 
-    await Future.delayed(const Duration(seconds: 2));
+    //await Future.delayed(const Duration(seconds: 2));
     setState(() {
       events.loadData();
     });
@@ -100,17 +97,18 @@ class _DashboardFragementState extends State<DashboardFragement> {
 
   void showAppliedEventDetails(Event event) {
     showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (BuildContext context) {
-          return Container(
-            padding: const EdgeInsets.all(16.0),
-            height: 600,
-            child: AppliedEventDetailsPage(
-              event: event,
-              onClose: () => {Navigator.pop(context), _refreshPage()},
-            ),
-          );
-        });
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          height: 600,
+          child: AppliedEventDetailsPage(
+            event: event,
+            onClose: () => {Navigator.pop(context), _refreshPage()},
+          ),
+        );
+      },
+    );
   }
 }
