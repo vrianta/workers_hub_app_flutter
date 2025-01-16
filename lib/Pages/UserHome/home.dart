@@ -4,7 +4,7 @@ import 'package:wo1/Pages/UserHome/Components/buttom_navigation.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/home_fragment.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Accounts/accounts_fragment.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Dashboard/dashboard_fragment.dart';
-import 'package:wo1/Pages/UserHome/Fragments/groups_fragment.dart';
+import 'package:wo1/Pages/UserHome/Fragments/notifications_fragment.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -22,7 +22,7 @@ class _HomeState extends State<Home> {
 
   late final HomeFragment homeFragment;
   late final DashboardFragement dashboardFragement;
-  late final GroupsFragement groupsFragement;
+  late final NotificationsFragment notificationsFragment;
   late final AccountsFragment accountsFragement;
 
   dynamic pageToShow;
@@ -42,7 +42,7 @@ class _HomeState extends State<Home> {
       singleChildScrollViewController: singleChildScrollViewController,
     );
     dashboardFragement = DashboardFragement();
-    groupsFragement = GroupsFragement();
+    notificationsFragment = NotificationsFragment();
     accountsFragement = AccountsFragment(
       isBusinessUser: false,
     );
@@ -74,7 +74,7 @@ class _HomeState extends State<Home> {
           children: [
             homeFragment,
             dashboardFragement,
-            groupsFragement,
+            notificationsFragment,
             accountsFragement,
           ],
         ),

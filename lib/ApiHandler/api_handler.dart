@@ -112,6 +112,16 @@ class ApiHandler {
     return response;
   }
 
+  // Get notifications method
+  Future<String> getNotifications() async {
+    await _initResponse("get-notification", {
+      "uid": uid,
+      "token": api_token,
+    });
+
+    return response;
+  }
+
   // Private method to handle HTTP POST request
   Future<void> _initResponse(
       String apiMethod, Map<String, String> postDataMap) async {

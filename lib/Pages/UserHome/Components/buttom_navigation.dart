@@ -34,7 +34,7 @@ class ButtomNavigation extends StatelessWidget {
           icon: Icon(Icons.dashboard),
         ),
         BottomNavigationBarItem(
-          label: 'Groups',
+          label: 'Notification',
           icon: Icon(Icons.group),
         ),
         BottomNavigationBarItem(
