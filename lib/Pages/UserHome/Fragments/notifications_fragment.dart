@@ -17,24 +17,16 @@ class _NotificationsFragmentState extends State<NotificationsFragment> {
 
   Future<List<Widget>> getNotificationCards() async {
     String response = await ApiHandler().getNotifications();
-    var data = jsonDecode(response);
+    var responseObj = jsonDecode(response);
 
+    var notificatons = jsonDecode(responseObj["MESSAGE"]);
     // Check for errors in response
-    if (data["SUCCESS"] == false) {
-      return [Center(child: Text(data["MESSAGE"]))];
+    if (responseObj["SUCCESS"] == false) {
+      return [Center(child: Text(responseObj["MESSAGE"]))];
     }
 
-    List<Map<String, String>> notifications =
-        List<Map<String, String>>.from(data["MESSAGE"].map((item) {
-      return {
-        'title': item['Heading'],
-        'message': item['Description'],
-        'date': item['created'],
-      };
-    }));
-
     // Create list of notification cards
-    List<Widget> notificationCards = notifications.map((notification) {
+    List<Widget> notificationCards = notificatons.map<Widget>((notification) {
       return Card(
         margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         elevation: 5,
@@ -43,17 +35,18 @@ class _NotificationsFragmentState extends State<NotificationsFragment> {
         ),
         child: ListTile(
           contentPadding: EdgeInsets.all(15),
+          leading: Icon(Icons.notifications, color: Colors.blueAccent),
           title: Text(
-            notification['title']!,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            notification['Heading'],
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
           ),
           subtitle: Text(
-            notification['message']!,
-            style: TextStyle(fontSize: 14),
+            notification['Description'],
+            style: TextStyle(fontSize: 8),
           ),
           trailing: Text(
-            notification['date']!,
-            style: TextStyle(fontSize: 12, color: Colors.grey),
+            notification['Created'],
+            style: TextStyle(fontSize: 8, color: Colors.grey),
           ),
           onTap: () {
             // Handle tap if necessary (e.g., navigate to notification details)
@@ -76,38 +69,47 @@ class _NotificationsFragmentState extends State<NotificationsFragment> {
   // initState
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: _refreshPage,
-      color: Colors.blueAccent,
-      child: FutureBuilder<List<Widget>>(
-        future: notificationCards,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return const Center(child: Text("Error loading notifications"));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text("No Notifications Found"));
-          }
+    return Scaffold(
+      appBar: AppBar(
+        title: Center(child: Text('Notifications')),
+        backgroundColor: Colors.deepPurple, // Updated app bar color
+      ),
+      backgroundColor: Colors.grey[200], // Add this line for background color
+      body: RefreshIndicator(
+        onRefresh: _refreshPage,
+        color: Colors.blueAccent,
+        child: FutureBuilder<List<Widget>>(
+          future: notificationCards,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text("Error loading notifications ${snapshot.error}"),
+              );
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text("No Notifications Found"));
+            }
 
-          List<Widget> notificationCards = snapshot.data!;
+            List<Widget> notificationCards = snapshot.data!;
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height,
-              child: ListView.separated(
-                itemCount: notificationCards.length,
-                separatorBuilder: (context, index) {
-                  return const SizedBox(height: 10);
-                },
-                itemBuilder: (context, index) {
-                  return notificationCards[index];
-                },
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height,
+                child: ListView.separated(
+                  itemCount: notificationCards.length,
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(height: 10);
+                  },
+                  itemBuilder: (context, index) {
+                    return notificationCards[index];
+                  },
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

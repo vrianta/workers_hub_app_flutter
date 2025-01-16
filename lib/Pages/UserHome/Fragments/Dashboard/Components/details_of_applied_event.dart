@@ -37,7 +37,7 @@ class _EventDetailsPageState extends State<AppliedEventDetailsPage> {
                       'Requirement', widget.event.eventRequirement.toString()),
                   _buildDetailRow('Budget', '\$${widget.event.eventBudget}'),
                   _buildDetailRow('Minimum Height',
-                      widget.event.eventMinimumHeight ?? 'N/A'),
+                      widget.event.eventMinimumHeight.toString()),
                   _buildDetailRow('Minimum Rating',
                       widget.event.eventMinimumRating?.toString() ?? 'N/A'),
                   _buildDetailRow('Minimum Age',

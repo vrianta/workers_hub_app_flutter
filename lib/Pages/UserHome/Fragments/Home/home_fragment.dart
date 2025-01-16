@@ -164,17 +164,18 @@ class _MainPage extends State<HomeFragment> {
 
   void showEventDetails(Event event) {
     showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (BuildContext context) {
-          return Container(
-            padding: const EdgeInsets.all(16.0),
-            height: 600,
-            child: EventDetailsPage(
-              event: event,
-              onClose: () => {Navigator.pop(context), _refreshPage()},
-            ),
-          );
-        });
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          height: 600,
+          child: EventDetailsPage(
+            event: event,
+            onClose: () => {Navigator.pop(context), _refreshPage()},
+          ),
+        );
+      },
+    );
   }
 }

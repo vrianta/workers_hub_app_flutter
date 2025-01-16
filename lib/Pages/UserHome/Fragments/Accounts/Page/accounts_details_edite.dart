@@ -46,7 +46,8 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
     workDoneController =
         TextEditingController(text: widget.userDetails.workDone.toString());
     dobController = TextEditingController(text: widget.userDetails.dateOfBirth);
-    heightController = TextEditingController(text: widget.userDetails.height);
+    heightController =
+        TextEditingController(text: widget.userDetails.height.toString());
     ageController =
         TextEditingController(text: widget.userDetails.age.toString());
 

@@ -36,7 +36,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                       'Requirement', widget.event.eventRequirement.toString()),
                   _buildDetailRow('Budget', '\$${widget.event.eventBudget}'),
                   _buildDetailRow('Minimum Height',
-                      widget.event.eventMinimumHeight ?? 'N/A'),
+                      widget.event.eventMinimumHeight.toString()),
                   _buildDetailRow('Minimum Rating',
                       widget.event.eventMinimumRating?.toString() ?? 'N/A'),
                   _buildDetailRow('Minimum Age',
@@ -127,5 +127,15 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       });
       return;
     }
+
+    await Fluttertoast.showToast(
+      msg: responseObj["MESSAGE"] ?? "Internal Error Occured",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      fontSize: 14.0,
+    );
   }
 }

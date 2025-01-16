@@ -3,7 +3,7 @@ class Event {
   final String eventType;
   final int eventRequirement;
   final int eventBudget;
-  final String? eventMinimumHeight;
+  final double? eventMinimumHeight;
   final int? eventMinimumRating;
   final int? eventMinimumAge;
   final String eventDate;
@@ -36,7 +36,7 @@ class Event {
       eventType: json['Type'],
       eventRequirement: json['Requirement'],
       eventBudget: json['Budget'],
-      eventMinimumHeight: json['MinimumHeight'],
+      eventMinimumHeight: json['MinimumHeight'] * 1.0,
       eventMinimumRating: json['MinimumRating'],
       eventMinimumAge: json['MinimumAge'],
       eventDate: json['Date'],

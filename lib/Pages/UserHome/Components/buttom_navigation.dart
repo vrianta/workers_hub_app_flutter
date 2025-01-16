@@ -14,9 +14,9 @@ class ButtomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      backgroundColor: Color(0xFF6200EE),
-      selectedItemColor: Colors.white,
-      unselectedItemColor: const Color.fromARGB(125, 255, 255, 255),
+      backgroundColor: Colors.deepPurple, // Updated background color
+      selectedItemColor: Colors.amber, // Updated selected item color
+      unselectedItemColor: Colors.white, // Updated unselected item color
       selectedFontSize: 14,
       unselectedFontSize: 14,
       onTap: (value) {
@@ -35,7 +35,7 @@ class ButtomNavigation extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           label: 'Notification',
-          icon: Icon(Icons.group),
+          icon: Icon(Icons.notifications),
         ),
         BottomNavigationBarItem(
           label: 'Account',
