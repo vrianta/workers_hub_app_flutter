@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:wo1/ApiHandler/api_handler.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class NotificationsFragment extends StatefulWidget {
   const NotificationsFragment({super.key});
@@ -44,9 +45,20 @@ class _NotificationsFragmentState extends State<NotificationsFragment> {
             notification['Description'],
             style: TextStyle(fontSize: 8),
           ),
-          trailing: Text(
-            notification['Created'],
-            style: TextStyle(fontSize: 8, color: Colors.grey),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                notification['Created'],
+                style: TextStyle(fontSize: 8, color: Colors.grey),
+              ),
+              IconButton(
+                icon: Icon(Icons.close, color: Colors.red),
+                onPressed: () {
+                  deleteNotification(notification['Description']);
+                },
+              ),
+            ],
           ),
           onTap: () {
             // Handle tap if necessary (e.g., navigate to notification details)
@@ -57,6 +69,21 @@ class _NotificationsFragmentState extends State<NotificationsFragment> {
     }).toList();
 
     return notificationCards;
+  }
+
+  Future<void> deleteNotification(String id) async {
+    await ApiHandler().deleteNotifications(id);
+    setState(() {
+      notificationCards = getNotificationCards();
+    });
+    Fluttertoast.showToast(
+      msg: "Notification deleted",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 
   @override

@@ -122,6 +122,17 @@ class ApiHandler {
     return response;
   }
 
+  // Get notifications method
+  Future<String> deleteNotifications(String description) async {
+    await _initResponse("delete-notification", {
+      "uid": uid,
+      "token": api_token,
+      "description": description,
+    });
+
+    return response;
+  }
+
   // Private method to handle HTTP POST request
   Future<void> _initResponse(
       String apiMethod, Map<String, String> postDataMap) async {
