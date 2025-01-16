@@ -29,8 +29,9 @@ class _NotificationsFragmentState extends State<NotificationsFragment> {
     // Create list of notification cards
     List<Widget> notificationCards = notificatons.map<Widget>((notification) {
       return Card(
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-        elevation: 5,
+        margin: EdgeInsets.symmetric(
+            vertical: 0.5, horizontal: 15), // Reduced vertical margin to 3
+        elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
