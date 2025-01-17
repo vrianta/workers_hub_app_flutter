@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wo1/Pages/UserHome/Fragments/Home/Components/event_handler.dart';
+import 'package:wo1/Pages/UserHome/Fragments/Home/Handlers/event_handler.dart';
 
 class AllEventsView extends StatefulWidget {
   const AllEventsView({
@@ -14,12 +14,11 @@ class AllEventsView extends StatefulWidget {
   final Future<void> Function() refreshPage;
 
   @override
-  _AllEventsViewState createState() => _AllEventsViewState();
+  State<AllEventsView> createState() => _AllEventsViewState();
 }
 
 class _AllEventsViewState extends State<AllEventsView> {
   int _eventsToShow = 10;
-  int _oldEventsToShow = 0;
   int totalEvents = 0;
   bool _isLoadingMore = false;
   List<Widget> visibleEventCards = [];
@@ -42,7 +41,7 @@ class _AllEventsViewState extends State<AllEventsView> {
       onRefresh: widget.refreshPage,
       color: Colors.blueAccent,
       child: FutureBuilder<List<Widget>>(
-        future: eventCards,
+        future: widget.events.getEventCards(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -58,7 +57,7 @@ class _AllEventsViewState extends State<AllEventsView> {
             );
           }
 
-          visibleEventCards.addAll(snapshot.data!.sublist(0, _eventsToShow));
+          visibleEventCards = snapshot.data!;
 
           //eventCards!.sublist(0, _eventsToShow);
 
@@ -103,7 +102,6 @@ class _AllEventsViewState extends State<AllEventsView> {
                 });
                 await Future.delayed(const Duration(seconds: 1));
                 setState(() {
-                  _oldEventsToShow = _eventsToShow;
                   _eventsToShow = (_eventsToShow + 10).clamp(0, totalEvents);
                   _isLoadingMore = false;
                 });

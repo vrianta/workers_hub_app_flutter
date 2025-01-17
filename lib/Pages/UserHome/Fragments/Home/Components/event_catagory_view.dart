@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wo1/Pages/UserHome/Fragments/Home/Components/event_handler.dart';
+import 'package:wo1/Pages/UserHome/Fragments/Home/Handlers/event_handler.dart';
 
 class EventsCatagoryView extends StatelessWidget {
   const EventsCatagoryView({

@@ -3,7 +3,7 @@ import 'package:wo1/Pages/UserHome/Fragments/Home/Components/all_events_view.dar
 import 'package:wo1/Pages/UserHome/Fragments/Home/Components/details_of_event.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Components/event_catagory_view.dart';
 import 'package:wo1/Models/events.dart';
-import 'package:wo1/Pages/UserHome/Fragments/Home/Components/event_handler.dart';
+import 'package:wo1/Pages/UserHome/Fragments/Home/Handlers/event_handler.dart';
 import 'package:wo1/Widget/catagory_textview.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
@@ -42,6 +42,16 @@ class _MainPage extends State<HomeFragment> {
     events = EventHandler(showEventDetails: showEventDetails);
     events.loadData();
     _speech = stt.SpeechToText();
+  }
+
+  @override
+  void dispose() {
+    widget.singleChildScrollViewController.dispose();
+    widget.listViewController.dispose();
+    catagoryScrollController.dispose();
+    textEditingController.dispose();
+    _speech.stop();
+    super.dispose();
   }
 
   @override
@@ -300,19 +310,6 @@ class _MainPage extends State<HomeFragment> {
     setState(() {
       events.filterEvents(_searchText);
     });
-  }
-
-  void _scrollToAllEvents() {
-    final categoryContext = _categoryKey.currentContext;
-    final allEventsContext = _allEventsKey.currentContext;
-
-    if (categoryContext != null && allEventsContext != null) {
-      Scrollable.ensureVisible(
-        allEventsContext,
-        duration: Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      );
-    }
   }
 
   void _scrollToTop() {

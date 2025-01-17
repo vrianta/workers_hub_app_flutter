@@ -4,7 +4,7 @@ import 'package:wo1/ApiHandler/api_handler.dart';
 import 'package:wo1/Models/events.dart';
 
 class EventHandler {
-  ApiHandler apiHandler = ApiHandler();
+  final ApiHandler apiHandler = ApiHandler();
   static List<Event> events = [];
   static List<Event> oldEventsRecord = [];
   static bool isEventsFetched = false;
@@ -32,23 +32,24 @@ class EventHandler {
   }
 
   Future<void> getEventData() async {
-    Map<String, dynamic> jsonObj = jsonDecode(await apiHandler.get());
+    final Map<String, dynamic> jsonObj = jsonDecode(await apiHandler.get());
 
     if (jsonObj.containsKey("SUCCESS") && jsonObj["SUCCESS"] as bool) {
       if (jsonObj["CODE"] as String == "EVENTS") {
-        List<dynamic> responseEvents = jsonDecode(jsonObj["MESSAGE"]);
+        final List<dynamic> responseEvents = jsonDecode(jsonObj["MESSAGE"]);
         events = responseEvents.map((json) => Event.fromJson(json)).toList();
       }
     }
 
     events.sort((a, b) {
-      DateTime dateA = DateTime.parse(a.eventDate);
-      DateTime dateB = DateTime.parse(b.eventDate);
+      final DateTime dateA = DateTime.parse(a.eventDate);
+      final DateTime dateB = DateTime.parse(b.eventDate);
       return dateA.compareTo(dateB);
     });
 
-    oldEventsRecord.clear();
-    oldEventsRecord = List.from(events);
+    oldEventsRecord
+      ..clear()
+      ..addAll(events);
 
     isEventsFetched = true;
   }
@@ -56,11 +57,10 @@ class EventHandler {
   Future<Map<String, List<Event>>> getGroupOfEvents() async {
     while (!isEventsFetched) {
       await Future.delayed(const Duration(milliseconds: 100));
-      if (groupedEvents.isNotEmpty) {
-        groupedEvents = {};
-      }
     }
-    groupedEvents = {};
+    if (groupedEvents.isNotEmpty) {
+      groupedEvents.clear();
+    }
     for (var event in events) {
       groupedEvents.putIfAbsent(event.eventType, () => []).add(event);
     }
@@ -85,7 +85,7 @@ class EventHandler {
           tag: event.eventID,
           child: Card(
             elevation: 5,
-            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -95,19 +95,19 @@ class EventHandler {
                 children: [
                   Positioned.fill(
                     child: Image.asset(
-                      key: Key("eventImage"),
+                      key: const Key("eventImage"),
                       getCategoryImagePath(event.eventType),
                       fit: BoxFit.cover,
                     ),
                   ),
                   Positioned.fill(
                     child: Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            const Color.fromARGB(221, 0, 0, 0),
-                            const Color.fromARGB(189, 0, 0, 0),
-                            const Color.fromARGB(119, 0, 0, 0),
+                            Color.fromARGB(221, 0, 0, 0),
+                            Color.fromARGB(189, 0, 0, 0),
+                            Color.fromARGB(119, 0, 0, 0),
                           ],
                           begin: Alignment.bottomCenter,
                           end: Alignment.topCenter,
@@ -127,19 +127,18 @@ class EventHandler {
                           children: [
                             Row(
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.event,
                                   color: Colors.white,
                                   size: 18,
                                 ),
-                                SizedBox(width: 4),
+                                const SizedBox(width: 4),
                                 Text(
                                   event.eventName,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color:
-                                        const Color.fromARGB(190, 82, 106, 118),
+                                    color: Color.fromARGB(190, 82, 106, 118),
                                     shadows: [
                                       Shadow(
                                         blurRadius: 10.0,
@@ -155,10 +154,9 @@ class EventHandler {
                               children: [
                                 Text(
                                   event.eventDate,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16,
-                                    color:
-                                        const Color.fromARGB(190, 82, 106, 118),
+                                    color: Color.fromARGB(190, 82, 106, 118),
                                     shadows: [
                                       Shadow(
                                         blurRadius: 10.0,
@@ -168,8 +166,8 @@ class EventHandler {
                                     ],
                                   ),
                                 ),
-                                SizedBox(width: 4),
-                                Icon(
+                                const SizedBox(width: 4),
+                                const Icon(
                                   Icons.calendar_today,
                                   color: Colors.white,
                                   size: 16,
@@ -178,24 +176,23 @@ class EventHandler {
                             ),
                           ],
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Row(
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.location_on,
                                   color: Colors.white,
                                   size: 15,
                                 ),
-                                SizedBox(width: 4),
+                                const SizedBox(width: 4),
                                 Text(
                                   event.eventLocation,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16,
-                                    color:
-                                        const Color.fromARGB(190, 82, 106, 118),
+                                    color: Color.fromARGB(190, 82, 106, 118),
                                     shadows: [
                                       Shadow(
                                         blurRadius: 10.0,
@@ -211,10 +208,9 @@ class EventHandler {
                               children: [
                                 Text(
                                   event.eventTime,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16,
-                                    color:
-                                        const Color.fromARGB(190, 82, 106, 118),
+                                    color: Color.fromARGB(190, 82, 106, 118),
                                     shadows: [
                                       Shadow(
                                         blurRadius: 10.0,
@@ -224,8 +220,8 @@ class EventHandler {
                                     ],
                                   ),
                                 ),
-                                SizedBox(width: 4),
-                                Icon(
+                                const SizedBox(width: 4),
+                                const Icon(
                                   Icons.access_time,
                                   color: Colors.white,
                                   size: 16,
@@ -247,8 +243,8 @@ class EventHandler {
   }
 
   SizedBox eventTypeCard(String event) {
-    Color fbgColor = Color.fromARGB(255, 0, 183, 24).withAlpha(40);
-    Color sbgColor = Color(0xFF6200EE).withAlpha(40);
+    final Color fbgColor = const Color.fromARGB(255, 0, 183, 24).withAlpha(40);
+    final Color sbgColor = const Color(0xFF6200EE).withAlpha(40);
 
     bgColor = isFBgColor ? sbgColor : fbgColor;
     isFBgColor = !isFBgColor;
@@ -260,7 +256,7 @@ class EventHandler {
       child: Card(
         color: bgColor,
         elevation: 1,
-        shadowColor: Color(0x40000000),
+        shadowColor: const Color(0x40000000),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -272,10 +268,10 @@ class EventHandler {
             children: [
               Text(
                 event,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
-                  color: const Color.fromARGB(255, 51, 51, 51),
+                  color: Color.fromARGB(255, 51, 51, 51),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -287,7 +283,7 @@ class EventHandler {
   }
 
   void clear() {
-    events = [];
+    events.clear();
     isEventsFetched = false;
   }
 

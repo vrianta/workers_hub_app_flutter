@@ -4,7 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wo1/Alerts/confirmation.dart';
 import 'package:wo1/ApiHandler/api_handler.dart';
 import 'package:wo1/Models/events.dart';
-import 'package:wo1/Pages/UserHome/Fragments/Home/Components/event_handler.dart';
+import 'package:wo1/Pages/UserHome/Fragments/Home/Handlers/event_handler.dart';
 
 class EventDetailsPage extends StatefulWidget {
   final Event event;
