@@ -56,62 +56,7 @@ class _MainPage extends State<HomeFragment> {
       body: Column(
         children: [
           searchBar(),
-          Expanded(
-            child: NotificationListener<ScrollNotification>(
-              onNotification: (ScrollNotification notification) {
-                // widget.listViewController.hasClients
-                if (!widget.listViewController.hasClients) {
-                  return false;
-                }
-                final currentOffset = widget.listViewController.offset;
-
-                if (currentOffset < previousOffset) {
-                  // User swiped up, scrolling up
-                  widget.singleChildScrollViewController.animateTo(
-                    getScrollOffset(),
-                    duration: Duration(milliseconds: 100),
-                    curve: Curves.easeOut,
-                  );
-                } else if (currentOffset > previousOffset) {
-                  // User swiped down, scrolling down
-                  widget.singleChildScrollViewController.animateTo(
-                    getScrollOffset(),
-                    duration: Duration(milliseconds: 100),
-                    curve: Curves.easeOut,
-                  );
-                }
-
-                previousOffset = currentOffset;
-                return true;
-              },
-              child: ListView(
-                controller: widget.singleChildScrollViewController,
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: [
-                  const SizedBox(height: 8),
-                  HeadingTextView(data: "Categories", key: _categoryKey),
-                  const SizedBox(height: 10),
-                  EventsCatagoryView(
-                    events: events,
-                    catagoryScrollController: catagoryScrollController,
-                    filterEvents: (eventName) => {
-                      setState(() {
-                        events.filterEvents(eventName);
-                      }),
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  HeadingTextView(data: "All Events", key: _allEventsKey),
-                  const SizedBox(height: 8),
-                  AllEventsView(
-                    events: events,
-                    listViewController: widget.listViewController,
-                    refreshPage: refreshPage,
-                  ),
-                ],
-              ),
-            ),
-          ),
+          body(),
         ],
       ),
       floatingActionButton: SizedBox(
@@ -121,6 +66,65 @@ class _MainPage extends State<HomeFragment> {
           onPressed: _scrollToTop,
           backgroundColor: Theme.of(context).primaryColor,
           child: Icon(Icons.arrow_upward, color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  Expanded body() {
+    return Expanded(
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification notification) {
+          // widget.listViewController.hasClients
+          if (!widget.listViewController.hasClients) {
+            return false;
+          }
+          final currentOffset = widget.listViewController.offset;
+
+          if (currentOffset < previousOffset) {
+            // User swiped up, scrolling up
+            widget.singleChildScrollViewController.animateTo(
+              getScrollOffset(),
+              duration: Duration(milliseconds: 100),
+              curve: Curves.easeOut,
+            );
+          } else if (currentOffset > previousOffset) {
+            // User swiped down, scrolling down
+            widget.singleChildScrollViewController.animateTo(
+              getScrollOffset(),
+              duration: Duration(milliseconds: 100),
+              curve: Curves.easeOut,
+            );
+          }
+
+          previousOffset = currentOffset;
+          return true;
+        },
+        child: ListView(
+          controller: widget.singleChildScrollViewController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            const SizedBox(height: 8),
+            HeadingTextView(data: "Categories", key: _categoryKey),
+            const SizedBox(height: 10),
+            EventsCatagoryView(
+              events: events,
+              catagoryScrollController: catagoryScrollController,
+              filterEvents: (eventName) => {
+                setState(() {
+                  events.filterEvents(eventName);
+                }),
+              },
+            ),
+            const SizedBox(height: 10),
+            HeadingTextView(data: "All Events", key: _allEventsKey),
+            const SizedBox(height: 8),
+            AllEventsView(
+              events: events,
+              listViewController: widget.listViewController,
+              refreshPage: refreshPage,
+            ),
+          ],
         ),
       ),
     );

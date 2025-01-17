@@ -20,14 +20,14 @@ class _NotificationsFragmentState extends State<NotificationsFragment> {
     String response = await ApiHandler().getNotifications();
     var responseObj = jsonDecode(response);
 
-    var notificatons = jsonDecode(responseObj["MESSAGE"]);
+    var notifications = jsonDecode(responseObj["MESSAGE"]);
     // Check for errors in response
     if (responseObj["SUCCESS"] == false) {
       return [Center(child: Text(responseObj["MESSAGE"]))];
     }
 
     // Create list of notification cards
-    List<Widget> notificationCards = notificatons.map<Widget>((notification) {
+    List<Widget> notificationCards = notifications.map<Widget>((notification) {
       return Card(
         margin: EdgeInsets.symmetric(
             vertical: 0.5, horizontal: 15), // Reduced vertical margin to 3
@@ -39,18 +39,18 @@ class _NotificationsFragmentState extends State<NotificationsFragment> {
           contentPadding: EdgeInsets.all(15),
           leading: Icon(Icons.notifications, color: Colors.blueAccent),
           title: Text(
-            notification['Heading'],
+            notification['Heading'] ?? 'No Heading',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
           ),
           subtitle: Text(
-            notification['Description'],
+            notification['Description'] ?? 'No Description',
             style: TextStyle(fontSize: 8),
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                notification['Created'],
+                notification['Created'] ?? 'No Date',
                 style: TextStyle(fontSize: 8, color: Colors.grey),
               ),
               IconButton(
@@ -97,15 +97,15 @@ class _NotificationsFragmentState extends State<NotificationsFragment> {
   // initState
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Center(
-          child: Text('Notifications'),
-        ), // Updated app bar color
-      ), // Add this line for background color
-      body: Hero(
-        tag: "NotificationsHero",
-        child: RefreshIndicator(
+    return Hero(
+      tag: "NotificationsHero",
+      child: Scaffold(
+        appBar: AppBar(
+          title: Center(
+            child: Text('Notifications'),
+          ), // Updated app bar color
+        ), // Add this line for background color
+        body: RefreshIndicator(
           onRefresh: _refreshPage,
           color: Colors.blueAccent,
           child: FutureBuilder<List<Widget>>(

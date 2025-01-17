@@ -34,7 +34,7 @@ class ViewController extends StatelessWidget {
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: Colors.white, // White bottom navigation bar
           selectedItemColor: Colors.deepPurpleAccent,
-          unselectedItemColor: Colors.deepPurpleAccent.withOpacity(0.54),
+          unselectedItemColor: const Color.fromARGB(130, 124, 77, 255),
           selectedLabelStyle: const TextStyle(fontSize: 14),
           unselectedLabelStyle: const TextStyle(fontSize: 14),
         ),
@@ -58,6 +58,12 @@ class ViewController extends StatelessWidget {
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
           backgroundColor: Colors.black,
           foregroundColor: Colors.white,
+        ),
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          },
         ),
       ),
       home: const Login(),
