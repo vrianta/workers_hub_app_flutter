@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:wo1/Pages/Login/Components/login_button.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:wo1/ApiHandler/api_handler.dart';
 import 'package:wo1/Pages/Login/Components/text_fields.dart';
+import 'package:wo1/Pages/UserHome/home.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -14,15 +18,9 @@ class _LoginState extends State<Login> {
   final TextEditingController userNameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  late LoginButton loginButton;
-
   @override
   void initState() {
     super.initState();
-    loginButton = LoginButton(
-      userNameController: userNameController,
-      passwordCotroller: passwordController,
-    );
   }
 
   @override
@@ -72,7 +70,24 @@ class _LoginState extends State<Login> {
                     children: [
                       usernameTextField(userNameController),
                       passwordTextField(passwordController),
-                      loginButton
+                      ElevatedButton(
+                        onPressed: () => onpressedLoginButton(
+                          context,
+                          userNameController,
+                          passwordController,
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF6200EE),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          'Login',
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -106,5 +121,75 @@ class _LoginState extends State<Login> {
     }
 
     return false;
+  }
+
+  Future<bool> onpressedLoginButton(
+      BuildContext context,
+      TextEditingController userNameController,
+      TextEditingController passwordController) async {
+    String userName = userNameController.text;
+    String password = passwordController.text;
+
+    if (isUserNameOrPasswordEmpty(userName, password)) {
+      showToast("User Name and Password Field Can't be empty",
+          const Color.fromARGB(146, 250, 7, 7));
+      return false;
+    }
+    ApiHandler apiHandler = ApiHandler();
+    await apiHandler.login(userName, password);
+    var responseObj = jsonDecode(apiHandler.response);
+
+    if (responseObj["CODE"] == "RELOGIN") {
+      showToast(responseObj["CODE"], Colors.red);
+      ApiHandler.cookieHeader = "";
+      return false;
+    }
+    if (responseObj["CODE"] != "LOGINDETAILS") {
+      showToast(responseObj["CODE"], Colors.red);
+      return false;
+    }
+
+    var loginDetails = jsonDecode(responseObj["MESSAGE"]);
+    ApiHandler.api_token = loginDetails["token"];
+    ApiHandler.accountType = loginDetails["accountType"];
+    ApiHandler.userDetails
+        .fromJson(jsonDecode(loginDetails["user_details"])[0]);
+    ApiHandler.uid = userName;
+
+    showToast("Logged in successfully", Colors.green);
+    storeCreds(userName, password);
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+          builder: (context) => Home(
+                userDetails: ApiHandler.userDetails,
+              )),
+    );
+
+    return true;
+  }
+
+  bool isUserNameOrPasswordEmpty(String userName, String password) {
+    return (userName.isEmpty || password.isEmpty);
+  }
+
+  void showToast(String? massage, Color? testColor) async {
+    await Fluttertoast.showToast(
+      msg: massage ?? "Internal Error Occured",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+      fontSize: 14.0,
+    );
+  }
+
+  void storeCreds(String userName, String password) async {
+    var storage = FlutterSecureStorage();
+
+    storage.write(key: "username", value: userName);
+    storage.write(key: "password", value: password);
   }
 }

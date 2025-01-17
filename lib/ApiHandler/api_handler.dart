@@ -139,6 +139,20 @@ class ApiHandler {
     return response;
   }
 
+  // Logout method
+  Future<void> logout() async {
+    await _initResponse("/logout", {});
+    // Clear saved credentials and cookies
+    await storage.delete(key: 'cookies');
+    await storage.delete(key: "username");
+    await storage.delete(key: "password");
+    cookies.clear();
+    cookieHeader = "";
+    api_token = '';
+    uid = '';
+    accountType = '';
+  }
+
   // Private method to handle HTTP POST request
   Future<void> _initResponse(
       String apiMethod, Map<String, String> postDataMap) async {

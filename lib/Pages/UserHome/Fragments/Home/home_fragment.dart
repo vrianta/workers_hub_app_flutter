@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:wo1/ApiHandler/api_handler.dart';
+import 'package:wo1/Models/user_details.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Components/all_events_view.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Components/details_of_event.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Components/event_catagory_view.dart';
@@ -34,9 +36,11 @@ class _MainPage extends State<HomeFragment> {
 
   final GlobalKey _categoryKey = GlobalKey();
   final GlobalKey _allEventsKey = GlobalKey();
+  late final UserDetails userDetails;
 
   @override
   void initState() {
+    userDetails = ApiHandler.userDetails;
     super.initState();
 
     events = EventHandler(showEventDetails: showEventDetails);
@@ -56,7 +60,6 @@ class _MainPage extends State<HomeFragment> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('Building HomeFragment'); // Add this line
     return mainPageView();
   }
 
@@ -243,10 +246,6 @@ class _MainPage extends State<HomeFragment> {
   Future<void> refreshPage() async {
     setState(() {
       events.clear();
-    });
-
-    await Future.delayed(const Duration(seconds: 2));
-    setState(() {
       events.loadData();
     });
   }
@@ -261,20 +260,6 @@ class _MainPage extends State<HomeFragment> {
         ),
       ),
     );
-    // showModalBottomSheet(
-    //   context: context,
-    //   isScrollControlled: true,
-    //   builder: (BuildContext context) {
-    //     return Container(
-    //       padding: const EdgeInsets.all(16.0),
-    //       height: 600,
-    //       child: EventDetailsPage(
-    //         event: event,
-    //         onClose: () => {Navigator.pop(context), refreshPage()},
-    //       ),
-    //     );
-    //   },
-    // );
   }
 
   void _listen() async {

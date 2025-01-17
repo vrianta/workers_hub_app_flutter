@@ -13,6 +13,11 @@ class AccountsFragment extends StatefulWidget {
 
 class _AccountsFragmentState extends State<AccountsFragment> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 10),
