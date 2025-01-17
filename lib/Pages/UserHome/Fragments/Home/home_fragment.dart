@@ -32,6 +32,9 @@ class _MainPage extends State<HomeFragment> {
   bool _isListening = false;
   String _searchText = '';
 
+  final GlobalKey _categoryKey = GlobalKey();
+  final GlobalKey _allEventsKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -52,7 +55,7 @@ class _MainPage extends State<HomeFragment> {
       appBar: appBar(),
       body: Column(
         children: [
-          //searchBar(),
+          searchBar(),
           Expanded(
             child: NotificationListener<ScrollNotification>(
               onNotification: (ScrollNotification notification) {
@@ -81,38 +84,44 @@ class _MainPage extends State<HomeFragment> {
                 previousOffset = currentOffset;
                 return true;
               },
-              child: RefreshIndicator(
-                onRefresh: _refreshPage,
-                color: Colors.blueAccent,
-                child: ListView(
-                  controller: widget.singleChildScrollViewController,
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  children: [
-                    const SizedBox(height: 8),
-                    const HeadingTextView(data: "Categories"),
-                    const SizedBox(height: 10),
-                    EventsCatagoryView(
-                      events: events,
-                      catagoryScrollController: catagoryScrollController,
-                      filterEvents: (eventName) => {
-                        setState(() {
-                          events.filterEvents(eventName);
-                        }),
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    const HeadingTextView(data: "All Events"),
-                    const SizedBox(height: 8),
-                    AllEventsView(
-                      events: events,
-                      listViewController: widget.listViewController,
-                    ),
-                  ],
-                ),
+              child: ListView(
+                controller: widget.singleChildScrollViewController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  const SizedBox(height: 8),
+                  HeadingTextView(data: "Categories", key: _categoryKey),
+                  const SizedBox(height: 10),
+                  EventsCatagoryView(
+                    events: events,
+                    catagoryScrollController: catagoryScrollController,
+                    filterEvents: (eventName) => {
+                      setState(() {
+                        events.filterEvents(eventName);
+                      }),
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  HeadingTextView(data: "All Events", key: _allEventsKey),
+                  const SizedBox(height: 8),
+                  AllEventsView(
+                    events: events,
+                    listViewController: widget.listViewController,
+                    refreshPage: refreshPage,
+                  ),
+                ],
               ),
             ),
           ),
         ],
+      ),
+      floatingActionButton: SizedBox(
+        height: 40.0,
+        width: 40.0,
+        child: FloatingActionButton(
+          onPressed: _scrollToTop,
+          backgroundColor: Theme.of(context).primaryColor,
+          child: Icon(Icons.arrow_upward, color: Colors.white),
+        ),
       ),
     );
   }
@@ -136,11 +145,13 @@ class _MainPage extends State<HomeFragment> {
         child: TextField(
           decoration: InputDecoration(
             prefixIcon: IconButton(
-              icon: Icon(Icons.mic_outlined),
+              icon: Icon(Icons.mic_outlined,
+                  color: Theme.of(context).primaryColor),
               onPressed: _listen,
             ),
             suffixIcon: IconButton(
-              icon: Icon(Icons.search_outlined),
+              icon: Icon(Icons.search_outlined,
+                  color: Theme.of(context).primaryColor),
               onPressed: () {
                 filterEvents();
               },
@@ -203,7 +214,7 @@ class _MainPage extends State<HomeFragment> {
     return widget.singleChildScrollViewController.offset;
   }
 
-  Future<void> _refreshPage() async {
+  Future<void> refreshPage() async {
     setState(() {
       events.clear();
     });
@@ -224,7 +235,7 @@ class _MainPage extends State<HomeFragment> {
           height: 600,
           child: EventDetailsPage(
             event: event,
-            onClose: () => {Navigator.pop(context), _refreshPage()},
+            onClose: () => {Navigator.pop(context), refreshPage()},
           ),
         );
       },
@@ -264,5 +275,31 @@ class _MainPage extends State<HomeFragment> {
     setState(() {
       events.filterEvents(_searchText);
     });
+  }
+
+  void _scrollToAllEvents() {
+    final categoryContext = _categoryKey.currentContext;
+    final allEventsContext = _allEventsKey.currentContext;
+
+    if (categoryContext != null && allEventsContext != null) {
+      Scrollable.ensureVisible(
+        allEventsContext,
+        duration: Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  void _scrollToTop() {
+    widget.singleChildScrollViewController.animateTo(
+      0,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+    widget.listViewController.animateTo(
+      0,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
   }
 }

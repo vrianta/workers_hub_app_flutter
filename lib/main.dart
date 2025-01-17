@@ -14,6 +14,7 @@ class ViewController extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         primaryColor: Colors.deepPurpleAccent,
+        iconTheme: const IconThemeData(color: Colors.deepPurpleAccent),
         highlightColor: const Color.fromARGB(
             190, 82, 106, 118), // Primary color for the main theme
         hintColor: const Color.fromARGB(
@@ -21,7 +22,7 @@ class ViewController extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         appBarTheme: AppBarTheme(
           color: const Color.fromARGB(255, 247, 247, 247), // White app bar
-          iconTheme: const IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: Colors.deepPurpleAccent),
           titleTextStyle: const TextStyle(
             color: Colors.black,
             fontSize: 20,
@@ -30,12 +31,12 @@ class ViewController extends StatelessWidget {
         ),
         scaffoldBackgroundColor:
             const Color.fromARGB(255, 247, 247, 247), // White body
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
           backgroundColor: Colors.white, // White bottom navigation bar
-          selectedItemColor: Colors.black,
-          unselectedItemColor: Colors.black54,
-          selectedLabelStyle: TextStyle(fontSize: 14),
-          unselectedLabelStyle: TextStyle(fontSize: 14),
+          selectedItemColor: Colors.deepPurpleAccent,
+          unselectedItemColor: Colors.deepPurpleAccent.withOpacity(0.54),
+          selectedLabelStyle: const TextStyle(fontSize: 14),
+          unselectedLabelStyle: const TextStyle(fontSize: 14),
         ),
         drawerTheme: const DrawerThemeData(
           backgroundColor: Color.fromARGB(255, 231, 231, 231),
