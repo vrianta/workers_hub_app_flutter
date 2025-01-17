@@ -193,6 +193,18 @@ class _MainPage extends State<HomeFragment> {
           ),
         ],
       ),
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              const Color.fromARGB(255, 247, 247, 247),
+              const Color.fromARGB(255, 247, 247, 247),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+      ),
     );
   }
 
@@ -226,20 +238,29 @@ class _MainPage extends State<HomeFragment> {
   }
 
   void showEventDetails(Event event) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(16.0),
-          height: 600,
-          child: EventDetailsPage(
-            event: event,
-            onClose: () => {Navigator.pop(context), refreshPage()},
-          ),
-        );
-      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EventDetailsPage(
+          event: event,
+          onClose: () => {Navigator.pop(context), refreshPage()},
+        ),
+      ),
     );
+    // showModalBottomSheet(
+    //   context: context,
+    //   isScrollControlled: true,
+    //   builder: (BuildContext context) {
+    //     return Container(
+    //       padding: const EdgeInsets.all(16.0),
+    //       height: 600,
+    //       child: EventDetailsPage(
+    //         event: event,
+    //         onClose: () => {Navigator.pop(context), refreshPage()},
+    //       ),
+    //     );
+    //   },
+    // );
   }
 
   void _listen() async {
