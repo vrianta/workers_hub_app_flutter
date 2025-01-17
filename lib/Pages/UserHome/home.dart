@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:wo1/Alerts/one_exit.dart';
 import 'package:wo1/Pages/UserHome/Components/buttom_navigation.dart';
+import 'package:wo1/Pages/UserHome/Fragments/Accounts/Page/accounts_details_edite.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/home_fragment.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Accounts/accounts_fragment.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Dashboard/dashboard_fragment.dart';
 import 'package:wo1/Pages/UserHome/Fragments/notifications_fragment.dart';
+import 'package:wo1/APIHandler/api_handler.dart'; // Import API handler
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -17,13 +19,14 @@ class _HomeState extends State<Home> {
   int currentIndex = 0;
   final ScrollController singleChildScrollViewController = ScrollController();
   final ScrollController listViewController = ScrollController();
-
   final PageController _pageController = PageController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   late final HomeFragment homeFragment;
   late final DashboardFragement dashboardFragement;
   late final NotificationsFragment notificationsFragment;
   late final AccountsFragment accountsFragement;
+  final ApiHandler apiHandler = ApiHandler();
 
   dynamic pageToShow;
 
@@ -43,27 +46,161 @@ class _HomeState extends State<Home> {
     );
     dashboardFragement = DashboardFragement();
     notificationsFragment = NotificationsFragment();
-    accountsFragement = AccountsFragment(
-      isBusinessUser: false,
-    );
+    accountsFragement = AccountsFragment(isBusinessUser: false);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: ButtomNavigation(
-        currentIndex: currentIndex,
-        onTabSelected: (index) {
-          setState(() {
-            currentIndex = index;
-            _pageController.animateToPage(
-              index,
-              duration: const Duration(milliseconds: 300), // Animation duration
-              curve: Curves.easeInOut, // Smooth animation curve
-            );
-          });
-          // Smooth page switching
-        },
+      key: _scaffoldKey,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.account_circle_outlined),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
+        actions: [
+          Hero(
+            tag: "NotificationsHero",
+            child: IconButton(
+              key: Key("Notifications"),
+              icon: Icon(Icons.notifications_outlined),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => NotificationsFragment()),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            GestureDetector(
+              onTap: () {
+                // Show UserDetailsPage in the current drawer
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        UserDetailsPage(
+                      key: Key(
+                          "UserDetails"), // Use the same key for smooth animation
+                      userDetails: ApiHandler
+                          .userDetails, // Correct reference to static member
+                    ),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                      const begin = Offset(1.0, 0.0);
+                      const end = Offset.zero;
+                      const curve = Curves.easeInOut;
+
+                      var tween = Tween(begin: begin, end: end)
+                          .chain(CurveTween(curve: curve));
+                      var offsetAnimation = animation.drive(tween);
+
+                      return SlideTransition(
+                        position: offsetAnimation,
+                        child: child,
+                      );
+                    },
+                    transitionDuration: Duration(
+                        milliseconds: 300), // Slower animation duration
+                  ),
+                );
+              },
+              child: UserAccountsDrawerHeader(
+                key:
+                    Key("UserDetails"), // Use the same key for smooth animation
+                decoration: BoxDecoration(
+                  color: Theme.of(context)
+                      .primaryColor, // Match with current theme
+                ),
+                currentAccountPicture: CircleAvatar(
+                  backgroundImage: NetworkImage(ApiHandler.userDetails
+                      .photoUrl), // Correct reference to static member
+                  radius: 40, // Adjust the radius as needed
+                ),
+                accountName: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      ApiHandler.uid, // Correct reference to static member
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Icon(Icons.star, color: Colors.yellow, size: 16),
+                        SizedBox(width: 4),
+                        Text(
+                          '${ApiHandler.userDetails.rating}', // Correct reference to static member
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 2), // Add space under the rating stars
+                  ],
+                ),
+                accountEmail: null, // Remove the default email field
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home_outlined),
+              title: Text('Home'),
+              onTap: () {
+                Navigator.pop(context);
+                setState(() {
+                  currentIndex = 0;
+                  _pageController.animateToPage(
+                    currentIndex,
+                    duration:
+                        const Duration(milliseconds: 300), // Animation duration
+                    curve: Curves.easeInOut, // Smooth animation curve
+                  );
+                });
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.dashboard_outlined),
+              title: Text('Applied Events'),
+              onTap: () {
+                Navigator.pop(context);
+                setState(() {
+                  currentIndex = 1;
+                  _pageController.animateToPage(
+                    currentIndex,
+                    duration:
+                        const Duration(milliseconds: 300), // Animation duration
+                    curve: Curves.easeInOut, // Smooth animation curve
+                  );
+                });
+              },
+            ),
+            Divider(), // Add a divider before the logout button
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text('Logout'),
+              onTap: () {
+                // Handle logout action
+                Navigator.pop(context);
+                // Add your logout logic here
+              },
+            ),
+          ],
+        ),
       ),
       body: PopScope(
         canPop: false,
@@ -78,6 +215,20 @@ class _HomeState extends State<Home> {
             accountsFragement,
           ],
         ),
+      ),
+      bottomNavigationBar: ButtomNavigation(
+        currentIndex: currentIndex,
+        onTabSelected: (index) {
+          setState(() {
+            currentIndex = index;
+            _pageController.animateToPage(
+              index,
+              duration: const Duration(milliseconds: 300), // Animation duration
+              curve: Curves.easeInOut, // Smooth animation curve
+            );
+          });
+          // Smooth page switching
+        },
       ),
     );
   }

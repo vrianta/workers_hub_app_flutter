@@ -1,5 +1,6 @@
 class Event {
   final String eventID;
+  final String eventName; // New property
   final String eventType;
   final int eventRequirement;
   final int eventBudget;
@@ -15,6 +16,7 @@ class Event {
 
   Event({
     required this.eventID,
+    required this.eventName, // New property
     required this.eventType,
     required this.eventRequirement,
     required this.eventBudget,
@@ -32,20 +34,21 @@ class Event {
   // Factory constructor to create an Event from a JSON object
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
-      eventID: json['EventID'],
-      eventType: json['Type'],
-      eventRequirement: json['Requirement'],
-      eventBudget: json['Budget'],
-      eventMinimumHeight: json['MinimumHeight'] * 1.0,
-      eventMinimumRating: json['MinimumRating'],
-      eventMinimumAge: json['MinimumAge'],
-      eventDate: json['Date'],
-      eventTime: json['Time'],
+      eventID: json['event_id'],
+      eventName: json['event_name'], // New property
+      eventType: json['type'],
+      eventRequirement: json['requirement'],
+      eventBudget: json['budget'],
+      eventMinimumHeight: json['minimum_height'] * 1.0,
+      eventMinimumRating: json['minimum_rating'],
+      eventMinimumAge: json['minimum_age'],
+      eventDate: json['date'],
+      eventTime: json['time'],
       foodProvided:
-          json['FoodProvided'] == 1, // Assuming 1 means true and 0 means false
-      eventLanguage: json['Language'],
-      eventLocation: json['Location'],
-      ownerID: json['OwnerID'],
+          json['food_provided'] == 1, // Assuming 1 means true and 0 means false
+      eventLanguage: json['language'],
+      eventLocation: json['location'],
+      ownerID: json['owner_id'],
     );
   }
 }

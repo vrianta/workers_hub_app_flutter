@@ -99,44 +99,47 @@ class _NotificationsFragmentState extends State<NotificationsFragment> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Notifications')),
-        backgroundColor: Colors.deepPurple, // Updated app bar color
-      ),
-      backgroundColor: Colors.grey[200], // Add this line for background color
-      body: RefreshIndicator(
-        onRefresh: _refreshPage,
-        color: Colors.blueAccent,
-        child: FutureBuilder<List<Widget>>(
-          future: notificationCards,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text("Error loading notifications ${snapshot.error}"),
-              );
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text("No Notifications Found"));
-            }
+        title: Center(
+          child: Text('Notifications'),
+        ), // Updated app bar color
+      ), // Add this line for background color
+      body: Hero(
+        tag: "NotificationsHero",
+        child: RefreshIndicator(
+          onRefresh: _refreshPage,
+          color: Colors.blueAccent,
+          child: FutureBuilder<List<Widget>>(
+            future: notificationCards,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(
+                  child: Text("Error loading notifications ${snapshot.error}"),
+                );
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Center(child: Text("No Notifications Found"));
+              }
 
-            List<Widget> notificationCards = snapshot.data!;
+              List<Widget> notificationCards = snapshot.data!;
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height,
-                child: ListView.separated(
-                  itemCount: notificationCards.length,
-                  separatorBuilder: (context, index) {
-                    return const SizedBox(height: 10);
-                  },
-                  itemBuilder: (context, index) {
-                    return notificationCards[index];
-                  },
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: ListView.separated(
+                    itemCount: notificationCards.length,
+                    separatorBuilder: (context, index) {
+                      return const SizedBox(height: 10);
+                    },
+                    itemBuilder: (context, index) {
+                      return notificationCards[index];
+                    },
+                  ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );

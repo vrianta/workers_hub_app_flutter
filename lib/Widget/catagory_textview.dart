@@ -13,7 +13,12 @@ class HeadingTextView extends StatelessWidget {
       padding: EdgeInsets.only(left: 20),
       child: Text(
         data,
-        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          fontFamily: 'Roboto',
+          color: Theme.of(context).primaryColor,
+        ),
         textAlign: TextAlign.start,
       ),
     );

@@ -7,6 +7,8 @@ import 'package:wo1/Models/user_details.dart';
 final storage = FlutterSecureStorage(); // Create a storage instance
 
 class ApiHandler {
+  // Constructor
+
   // ignore: constant_identifier_names
   static const String APISERVERADDRESS = "http://192.168.1.105:8082";
   static List<String> cookies = [];
@@ -29,6 +31,10 @@ class ApiHandler {
     age: 0,
     gender: "",
   );
+
+  String getUserDetails() {
+    return "userDetails";
+  }
 
   // Login method
   Future<String> login(String userid, String password) async {

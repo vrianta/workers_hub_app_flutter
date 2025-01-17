@@ -25,7 +25,7 @@ class UserDetails {
     required this.gender,
   });
 
-  void fromJson(Map<String, dynamic> json) {
+  Future<void> fromJson(Map<String, dynamic> json) async {
     userId = json['UserId'];
     fullName = json['FullName'];
     phoneNumber = json['PhoneNumber'];

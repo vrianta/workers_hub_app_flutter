@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:wo1/ApiHandler/api_handler.dart';
 import 'package:wo1/Models/events.dart';
@@ -7,10 +6,21 @@ import 'package:wo1/Models/events.dart';
 class EventHandler {
   ApiHandler apiHandler = ApiHandler();
   static List<Event> events = [];
-  static List<String> eventTypes = [];
+  static List<Event> oldEventsRecord = [];
   static bool isEventsFetched = false;
   static bool isFBgColor = true;
   Color bgColor = Colors.white;
+
+  // Static map to store category image paths
+  static const Map<String, String> categoryImagePaths = {
+    "b'day": "lib/assets/images/birthday.jpg",
+    "meeting": "lib/assets/images/meeting.jpg",
+    "conference": "lib/assets/images/conference.jpg",
+    "event": "lib/assets/images/event.jpg",
+    "party": "lib/assets/images/party.webp",
+    "music": "lib/assets/images/music.jpeg",
+    "marriage": "lib/assets/images/marriage.jpg",
+  };
 
   Map<String, List<Event>> groupedEvents = {};
   final Function(Event) showEventDetails;
@@ -19,12 +29,9 @@ class EventHandler {
 
   Future<void> loadData() async {
     await getEventData();
-    getEventTypes();
   }
 
-  // Sample function that simulates gathering event data (e.g., from an API or database)
   Future<void> getEventData() async {
-    // Simulating JSON response parsing
     Map<String, dynamic> jsonObj = jsonDecode(await apiHandler.get());
 
     if (jsonObj.containsKey("SUCCESS") && jsonObj["SUCCESS"] as bool) {
@@ -34,22 +41,21 @@ class EventHandler {
       }
     }
 
-    // Sorting the events by eventDate asynchronously
     events.sort((a, b) {
-      DateTime dateA = DateTime.parse(
-          a.eventDate); // assuming eventDate is in a valid format
+      DateTime dateA = DateTime.parse(a.eventDate);
       DateTime dateB = DateTime.parse(b.eventDate);
-      return dateA.compareTo(dateB); // Sort by ascending date
+      return dateA.compareTo(dateB);
     });
+
+    oldEventsRecord.clear();
+    oldEventsRecord = List.from(events);
 
     isEventsFetched = true;
   }
 
   Future<Map<String, List<Event>>> getGroupOfEvents() async {
     while (!isEventsFetched) {
-      await Future.delayed(
-        const Duration(milliseconds: 100),
-      );
+      await Future.delayed(const Duration(milliseconds: 100));
       if (groupedEvents.isNotEmpty) {
         groupedEvents = {};
       }
@@ -62,104 +68,181 @@ class EventHandler {
     return groupedEvents;
   }
 
-  // Method to extract unique event types from the events list
-  Future<void> getEventTypes() async {
-    // Extract event types and remove duplicates using a Set
-    while (!isEventsFetched) {
-      await Future.delayed(
-        const Duration(milliseconds: 100),
-      ); // Non-blocking wait
-    }
-    eventTypes = events.map((event) => event.eventType).toSet().toList();
+  String getCategoryImagePath(String eventType) {
+    return categoryImagePaths[eventType.toLowerCase()] ??
+        'lib/assets/images/default.jpg';
   }
 
-  // Function to return a list of Card widgets containing event data
   Future<List<Widget>> getEventCards() async {
     while (!isEventsFetched) {
-      await Future.delayed(
-        const Duration(milliseconds: 100),
-      ); // Non-blocking wait
+      await Future.delayed(const Duration(milliseconds: 100));
     }
     return events.map((event) {
       return GestureDetector(
-          onTap: () => {showEventDetails(event)},
-          key: Key(event.eventID),
+        onTap: () => {showEventDetails(event)},
+        key: Key(event.eventID),
+        child: Hero(
+          tag: event.eventID,
           child: Card(
             elevation: 5,
             margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            child: SizedBox(
+              height: 200,
+              child: Stack(
                 children: [
-                  // Event Type
-                  Text(
-                    event.eventType,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
+                  Positioned.fill(
+                    child: Image.asset(
+                      key: Key("eventImage"),
+                      getCategoryImagePath(event.eventType),
+                      fit: BoxFit.cover,
                     ),
                   ),
-                  SizedBox(height: 8),
-
-                  // Event Location
-                  Text(
-                    'Location: ${event.eventLocation}',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black54,
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            const Color.fromARGB(221, 0, 0, 0),
+                            const Color.fromARGB(189, 0, 0, 0),
+                            const Color.fromARGB(119, 0, 0, 0),
+                          ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                        ),
+                      ),
                     ),
                   ),
-                  SizedBox(height: 8),
-
-                  // Event Date and Time
-                  Text(
-                    'Date: ${event.eventDate} | Time: ${event.eventTime}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-
-                  // Event Requirement
-                  Text(
-                    'Requirement: ${event.eventRequirement} people',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-
-                  // Event Budget
-                  Text(
-                    'Budget: \$${event.eventBudget}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
+                  Positioned(
+                    bottom: 8,
+                    left: 8,
+                    right: 8,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.event,
+                                  color: Colors.white,
+                                  size: 18,
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  event.eventName,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        const Color.fromARGB(190, 82, 106, 118),
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 10.0,
+                                        color: Colors.black,
+                                        offset: Offset(2.0, 2.0),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  event.eventDate,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color:
+                                        const Color.fromARGB(190, 82, 106, 118),
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 10.0,
+                                        color: Colors.black,
+                                        offset: Offset(2.0, 2.0),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(width: 4),
+                                Icon(
+                                  Icons.calendar_today,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 4),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.location_on,
+                                  color: Colors.white,
+                                  size: 15,
+                                ),
+                                SizedBox(width: 4),
+                                Text(
+                                  event.eventLocation,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color:
+                                        const Color.fromARGB(190, 82, 106, 118),
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 10.0,
+                                        color: Colors.black,
+                                        offset: Offset(2.0, 2.0),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  event.eventTime,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color:
+                                        const Color.fromARGB(190, 82, 106, 118),
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 10.0,
+                                        color: Colors.black,
+                                        offset: Offset(2.0, 2.0),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(width: 4),
+                                Icon(
+                                  Icons.access_time,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-          ));
-    }).toList();
-  }
-
-  Future<List<Widget>> getEventTypeCards() async {
-    while (!isEventsFetched) {
-      await Future.delayed(
-        const Duration(milliseconds: 100),
-      ); // Non-blocking wait
-    }
-    return eventTypes.map((event) {
-      return eventTypeCard(event);
+          ),
+        ),
+      );
     }).toList();
   }
 
@@ -167,15 +250,12 @@ class EventHandler {
     Color fbgColor = Color.fromARGB(255, 0, 183, 24).withAlpha(40);
     Color sbgColor = Color(0xFF6200EE).withAlpha(40);
 
-    if (isFBgColor) {
-      bgColor = sbgColor;
-    } else {
-      bgColor = fbgColor;
-    }
+    bgColor = isFBgColor ? sbgColor : fbgColor;
     isFBgColor = !isFBgColor;
+
     return SizedBox(
-      height: 80, // Fixed height for all cards
-      width: 95, // Fixed width for all cards
+      height: 80,
+      width: 95,
       key: Key(event),
       child: Card(
         color: bgColor,
@@ -188,8 +268,7 @@ class EventHandler {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment:
-                MainAxisAlignment.center, // Center content vertically
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
                 event,
@@ -198,7 +277,7 @@ class EventHandler {
                   fontWeight: FontWeight.bold,
                   color: const Color.fromARGB(255, 51, 51, 51),
                 ),
-                textAlign: TextAlign.center, // Center text horizontally
+                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -209,7 +288,22 @@ class EventHandler {
 
   void clear() {
     events = [];
-    eventTypes = [];
     isEventsFetched = false;
+  }
+
+  void filterEvents(String searchText) {
+    final searchLower = searchText.toLowerCase();
+    final filteredEvents = oldEventsRecord.where((event) {
+      final eventName = event.eventName.toLowerCase();
+      final eventType = event.eventType.toLowerCase();
+      final eventLocation = event.eventLocation.toLowerCase();
+      return eventName.contains(searchLower) ||
+          eventType.contains(searchLower) ||
+          eventLocation.contains(searchLower);
+    }).toList();
+
+    events
+      ..clear()
+      ..addAll(filteredEvents);
   }
 }

@@ -14,11 +14,13 @@ class ButtomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      backgroundColor: Colors.deepPurple, // Updated background color
-      selectedItemColor: Colors.amber, // Updated selected item color
-      unselectedItemColor: Colors.white, // Updated unselected item color
+      backgroundColor: Colors.white, // White background color
+      selectedItemColor: Colors.black, // Black selected item color
+      unselectedItemColor: Colors.black54, // Black unselected item color
       selectedFontSize: 14,
       unselectedFontSize: 14,
+      showSelectedLabels: false, // Hide selected labels
+      showUnselectedLabels: false, // Hide unselected labels
       onTap: (value) {
         // Invoke the callback to update currentIndex in the parent widget
         onTabSelected(value);
@@ -26,21 +28,25 @@ class ButtomNavigation extends StatelessWidget {
       currentIndex: currentIndex,
       items: [
         BottomNavigationBarItem(
-          label: 'Home',
-          icon: Icon(Icons.home),
+          icon: Icon(Icons.home_outlined),
+          label: '', // Removed label
+          backgroundColor: Colors.white, // Set background color
         ),
         BottomNavigationBarItem(
-          label: 'Dashboard',
-          icon: Icon(Icons.dashboard),
+          icon: Icon(Icons.dashboard_outlined),
+          label: '', // Removed label
+          backgroundColor: Colors.white, // Set background color
         ),
-        BottomNavigationBarItem(
-          label: 'Notification',
-          icon: Icon(Icons.notifications),
-        ),
-        BottomNavigationBarItem(
-          label: 'Account',
-          icon: Icon(Icons.account_box),
-        ),
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.notifications),
+        //   label: '', // Removed label
+        //   backgroundColor: Colors.deepPurple, // Set background color
+        // ),
+        // BottomNavigationBarItem(
+        //   icon: Icon(Icons.account_box),
+        //   label: '', // Removed label
+        //   backgroundColor: Colors.deepPurple, // Set background color
+        // ),
       ],
     );
   }
