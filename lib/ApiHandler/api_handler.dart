@@ -63,10 +63,23 @@ class ApiHandler {
   }
 
   // Get contents method
-  Future<String> get() async {
+  Future<String> getEvents(int lastIndex) async {
     await _initResponse("get-contents", {
       "uid": uid,
       "token": api_token,
+      "last_event_index": lastIndex.toString(),
+    });
+
+    return response;
+  }
+
+  // Get contents method
+  Future<String> getEventsByType(int lastIndex, String eventType) async {
+    await _initResponse("get-events-by-type", {
+      "uid": uid,
+      "token": api_token,
+      "last_event_index": lastIndex.toString(),
+      "event_type": eventType,
     });
 
     return response;

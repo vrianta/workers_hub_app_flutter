@@ -72,7 +72,6 @@ class _LoginState extends State<Login> {
                       passwordTextField(passwordController),
                       ElevatedButton(
                         onPressed: () => onpressedLoginButton(
-                          context,
                           userNameController,
                           passwordController,
                         ),
@@ -114,7 +113,6 @@ class _LoginState extends State<Login> {
       // ignore: use_build_context_synchronously
       return onpressedLoginButton(
         // ignore: use_build_context_synchronously
-        context,
         userNameController,
         passwordController,
       );
@@ -123,9 +121,7 @@ class _LoginState extends State<Login> {
     return false;
   }
 
-  Future<bool> onpressedLoginButton(
-      BuildContext context,
-      TextEditingController userNameController,
+  Future<bool> onpressedLoginButton(TextEditingController userNameController,
       TextEditingController passwordController) async {
     String userName = userNameController.text;
     String password = passwordController.text;
@@ -140,10 +136,11 @@ class _LoginState extends State<Login> {
     var responseObj = jsonDecode(apiHandler.response);
 
     if (responseObj["CODE"] == "RELOGIN") {
-      showToast(responseObj["CODE"], Colors.red);
-      ApiHandler.cookieHeader = "";
-      return false;
+      // Auto login
+      await apiHandler.login(userName, password);
+      responseObj = jsonDecode(apiHandler.response);
     }
+
     if (responseObj["CODE"] != "LOGINDETAILS") {
       showToast(responseObj["CODE"], Colors.red);
       return false;

@@ -1,116 +1,34 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:wo1/ApiHandler/api_handler.dart';
-import 'package:wo1/Models/events.dart';
+import 'event_handler.dart';
 
-class EventHandler {
-  final ApiHandler apiHandler = ApiHandler();
-  List<Event> events = [];
-  static List<Event> oldEventsRecord = [];
-  static bool isEventsFetched = false;
-  static bool isFBgColor = true;
-  Color bgColor = Colors.white;
+class ShowEventByType extends StatefulWidget {
+  final String eventType;
 
-  // Static map to store category image paths
-  static const Map<String, String> categoryImagePaths = {
-    "b'day": "lib/assets/images/birthday.jpg",
-    "meeting": "lib/assets/images/meeting.jpg",
-    "conference": "lib/assets/images/conference.jpg",
-    "event": "lib/assets/images/event.jpg",
-    "party": "lib/assets/images/party.webp",
-    "music": "lib/assets/images/music.jpeg",
-    "marriage": "lib/assets/images/marriage.jpg",
-  };
+  const ShowEventByType({super.key, required this.eventType});
 
-  Map<String, List<Event>> groupedEvents = {};
-  final Function(Event) showEventDetails;
+  @override
+  _ShowEventByTypeState createState() => _ShowEventByTypeState();
+}
 
-  EventHandler({required this.showEventDetails});
+class _ShowEventByTypeState extends State<ShowEventByType> {
+  late Future<List<Widget>> eventCards;
+  final EventByTypeHandler eventHandler =
+      EventByTypeHandler(showEventDetails: (event) {});
 
-  Future<void> loadData() async {
-    await getEventData();
+  @override
+  void initState() {
+    super.initState();
+    eventCards = _loadEventsByType();
   }
 
-  Future<void> getEventData() async {
-    final Map<String, dynamic> jsonObj =
-        jsonDecode(await apiHandler.getEvents(events.length - 1));
-
-    if (jsonObj.containsKey("SUCCESS") && jsonObj["SUCCESS"] as bool) {
-      if (jsonObj["CODE"] as String == "EVENTS") {
-        final List<dynamic> responseEvents = jsonDecode(jsonObj["MESSAGE"]);
-        if (responseEvents.isNotEmpty) {
-          events.addAll(
-              responseEvents.map((json) => Event.fromJson(json)).toList());
-        }
-      }
-    }
-
-    events.sort((a, b) {
-      final DateTime dateA = DateTime.parse(a.eventDate);
-      final DateTime dateB = DateTime.parse(b.eventDate);
-      return dateA.compareTo(dateB);
-    });
-
-    oldEventsRecord
-      ..clear()
-      ..addAll(events);
-
-    isEventsFetched = true;
-  }
-
-  Future<void> loadMoreData() async {
-    final Map<String, dynamic> jsonObj =
-        jsonDecode(await apiHandler.getEvents(events.length - 1));
-
-    if (jsonObj.containsKey("SUCCESS") && jsonObj["SUCCESS"] as bool) {
-      if (jsonObj["CODE"] as String == "EVENTS") {
-        final List<dynamic> responseEvents = jsonDecode(jsonObj["MESSAGE"]);
-        if (responseEvents.isNotEmpty) {
-          events.addAll(
-              responseEvents.map((json) => Event.fromJson(json)).toList());
-        }
-      }
-    }
-
-    events.sort((a, b) {
-      final DateTime dateA = DateTime.parse(a.eventDate);
-      final DateTime dateB = DateTime.parse(b.eventDate);
-      return dateA.compareTo(dateB);
-    });
-
-    oldEventsRecord
-      ..clear()
-      ..addAll(events);
-
-    isEventsFetched = true;
-  }
-
-  Future<Map<String, List<Event>>> getGroupOfEvents() async {
-    while (!isEventsFetched) {
-      await Future.delayed(const Duration(milliseconds: 100));
-    }
-    if (groupedEvents.isNotEmpty) {
-      groupedEvents.clear();
-    }
-    for (var event in events) {
-      groupedEvents.putIfAbsent(event.eventType, () => []).add(event);
-    }
-
-    return groupedEvents;
-  }
-
-  String getCategoryImagePath(String eventType) {
-    return categoryImagePaths[eventType.toLowerCase()] ??
-        'lib/assets/images/default.jpg';
-  }
-
-  Future<List<Widget>> getEventCards() async {
-    while (!isEventsFetched) {
-      await Future.delayed(const Duration(milliseconds: 100));
-    }
-    return events.map((event) {
+  Future<List<Widget>> _loadEventsByType() async {
+    await eventHandler.loadData(widget.eventType);
+    final eventsByType = eventHandler.events
+        .where((event) => event.eventType == widget.eventType)
+        .toList();
+    return eventsByType.map((event) {
       return GestureDetector(
-        onTap: () => {showEventDetails(event)},
+        onTap: () => {eventHandler.showEventDetails(event)},
         key: Key(event.eventID),
         child: Hero(
           tag: event.eventID,
@@ -121,14 +39,14 @@ class EventHandler {
               borderRadius: BorderRadius.circular(10),
             ),
             child: SizedBox(
-              height: 200, // Reverted height
-              width: double.infinity, // Reverted width
+              height: 200,
+              width: double.infinity,
               child: Stack(
                 children: [
                   Positioned.fill(
                     child: Image.asset(
                       key: const Key("eventImage"),
-                      getCategoryImagePath(event.eventType),
+                      eventHandler.getCategoryImagePath(event.eventType),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -274,64 +192,33 @@ class EventHandler {
     }).toList();
   }
 
-  SizedBox eventTypeCard(String event) {
-    final Color fbgColor = const Color.fromARGB(255, 0, 183, 24).withAlpha(40);
-    final Color sbgColor = const Color(0xFF6200EE).withAlpha(40);
-
-    bgColor = isFBgColor ? sbgColor : fbgColor;
-    isFBgColor = !isFBgColor;
-
-    return SizedBox(
-      height: 80,
-      width: 95,
-      key: Key(event),
-      child: Card(
-        color: bgColor,
-        elevation: 1,
-        shadowColor: const Color(0x40000000),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                event,
-                style: const TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 51, 51, 51),
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Events: ${widget.eventType}'),
+      ),
+      body: FutureBuilder<List<Widget>>(
+        future: eventCards,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return const Center(
+              child: Text("Error loading events"),
+            );
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(
+              child: Text("No Events Found"),
+            );
+          }
+          return ListView(
+            children: snapshot.data!,
+          );
+        },
       ),
     );
-  }
-
-  void clear() {
-    events.clear();
-    isEventsFetched = false;
-  }
-
-  void filterEvents(String searchText) {
-    final searchLower = searchText.toLowerCase();
-    final filteredEvents = oldEventsRecord.where((event) {
-      final eventName = event.eventName.toLowerCase();
-      final eventType = event.eventType.toLowerCase();
-      final eventLocation = event.eventLocation.toLowerCase();
-      return eventName.contains(searchLower) ||
-          eventType.contains(searchLower) ||
-          eventLocation.contains(searchLower);
-    }).toList();
-
-    events
-      ..clear()
-      ..addAll(filteredEvents);
   }
 }

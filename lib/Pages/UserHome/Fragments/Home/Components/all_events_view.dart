@@ -19,7 +19,7 @@ class AllEventsView extends StatefulWidget {
 
 class _AllEventsViewState extends State<AllEventsView> {
   int _eventsToShow = 10;
-  int totalEvents = 0;
+  int _lastShownIndex = 0;
   bool _isLoadingMore = false;
   List<Widget> visibleEventCards = [];
   Future<List<Widget>> eventCards = Future.value([]);
@@ -27,12 +27,13 @@ class _AllEventsViewState extends State<AllEventsView> {
   @override
   void initState() {
     eventCards = widget.events.getEventCards();
-    eventCards.then((cards) {
-      setState(() {
-        totalEvents = cards.length;
-      });
-    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    widget.listViewController.dispose();
+    super.dispose();
   }
 
   @override
@@ -41,7 +42,7 @@ class _AllEventsViewState extends State<AllEventsView> {
       onRefresh: widget.refreshPage,
       color: Colors.blueAccent,
       child: FutureBuilder<List<Widget>>(
-        future: widget.events.getEventCards(),
+        future: eventCards,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -57,21 +58,21 @@ class _AllEventsViewState extends State<AllEventsView> {
             );
           }
 
-          visibleEventCards = snapshot.data!;
-
-          //eventCards!.sublist(0, _eventsToShow);
-
+          if (visibleEventCards.isEmpty) {
+            visibleEventCards
+                .addAll(snapshot.data!.sublist(_lastShownIndex, _eventsToShow));
+          }
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: SizedBox(
+            child: Container(
               height: MediaQuery.of(context).size.height,
               child: ListView.separated(
                 controller: widget.listViewController,
                 shrinkWrap: true,
-                scrollDirection: Axis.vertical,
+                scrollDirection: Axis.vertical, // Changed back to vertical
                 itemCount: visibleEventCards.length + 1,
                 separatorBuilder: (context, index) {
-                  return SizedBox(height: 10);
+                  return SizedBox(height: 10); // Changed back to height
                 },
                 itemBuilder: (context, index) {
                   if (index == visibleEventCards.length) {
@@ -88,10 +89,6 @@ class _AllEventsViewState extends State<AllEventsView> {
   }
 
   Widget _buildLoadMoreButton() {
-    if (_eventsToShow >= totalEvents) {
-      return const SizedBox.shrink();
-    }
-
     return Center(
       child: _isLoadingMore
           ? const CircularProgressIndicator()
@@ -100,16 +97,15 @@ class _AllEventsViewState extends State<AllEventsView> {
                 setState(() {
                   _isLoadingMore = true;
                 });
-                await Future.delayed(const Duration(seconds: 1));
+                await widget.events.loadMoreData(); // Load more data
+                final newEventCards = await widget.events.getEventCards();
                 setState(() {
-                  _eventsToShow = (_eventsToShow + 10).clamp(0, totalEvents);
+                  _lastShownIndex = _eventsToShow;
+                  _eventsToShow += 10;
+                  visibleEventCards.addAll(
+                      newEventCards.sublist(_lastShownIndex, _eventsToShow));
                   _isLoadingMore = false;
                 });
-                widget.listViewController.animateTo(
-                  widget.listViewController.position.maxScrollExtent,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeInOut,
-                );
               },
               child: const Text("Load More"),
             ),
