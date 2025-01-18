@@ -6,12 +6,10 @@ class EventsCatagoryView extends StatelessWidget {
   const EventsCatagoryView({
     super.key,
     required this.catagoryScrollController,
-    required this.filterEvents,
-    this.events, // Keep the old parameter for reference
+    required this.filterEvents, // Keep the old parameter for reference
   });
 
   final ScrollController catagoryScrollController;
-  final EventHandler? events;
   final Function filterEvents; // Keep the old parameter for reference
 
   static const List<Map<String, dynamic>> eventTypes = [
