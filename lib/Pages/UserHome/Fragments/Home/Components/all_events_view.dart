@@ -36,6 +36,13 @@ class _AllEventsViewState extends State<AllEventsView> {
   }
 
   @override
+  void didUpdateWidget(AllEventsView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    eventCards = widget.events
+        .getEventCards(); // Reload events when the widget is updated
+  }
+
+  @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: widget.refreshPage,
