@@ -6,7 +6,7 @@ import 'package:wo1/Widget/event_card.dart';
 
 class EventHandler {
   final ApiHandler apiHandler = ApiHandler();
-  List<Event> events = [];
+  static List<Event> events = [];
   static List<Event> oldEventsRecord = [];
   static bool isEventsFetched = false;
   static bool isFBgColor = true;
