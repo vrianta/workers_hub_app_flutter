@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wo1/Models/events.dart';
-import 'package:wo1/Pages/DetailsOfEvents/details_of_event.dart';
+import 'package:wo1/Pages/EventsShowPages/details_of_event.dart';
 import 'event_handler.dart';
 
 class ShowEventByType extends StatefulWidget {
