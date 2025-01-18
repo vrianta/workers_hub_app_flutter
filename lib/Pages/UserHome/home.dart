@@ -21,7 +21,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int currentIndex = 0;
-  final PageController _pageController = PageController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   late final HomeFragment homeFragment;
@@ -30,13 +29,6 @@ class _HomeState extends State<Home> {
   late final AccountsFragment accountsFragement;
 
   dynamic pageToShow;
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-
-    super.dispose();
-  }
 
   @override
   void initState() {
@@ -56,9 +48,8 @@ class _HomeState extends State<Home> {
       body: PopScope(
         canPop: false,
         onPopInvokedWithResult: (c, result) async => {exitConfirmation()},
-        child: PageView(
-          controller: _pageController,
-          physics: const NeverScrollableScrollPhysics(), // Disable swipe
+        child: IndexedStack(
+          index: currentIndex,
           children: [
             homeFragment,
             dashboardFragement,
@@ -72,13 +63,7 @@ class _HomeState extends State<Home> {
         onTabSelected: (index) {
           setState(() {
             currentIndex = index;
-            _pageController.animateToPage(
-              index,
-              duration: const Duration(milliseconds: 300), // Animation duration
-              curve: Curves.easeInOut, // Smooth animation curve
-            );
           });
-          // Smooth page switching
         },
       ),
     );
@@ -96,10 +81,8 @@ class _HomeState extends State<Home> {
                 PageRouteBuilder(
                   pageBuilder: (context, animation, secondaryAnimation) =>
                       UserDetailsPage(
-                    key: Key(
-                        "UserDetails"), // Use the same key for smooth animation
-                    userDetails: widget
-                        .userDetails, // Correct reference to static member
+                    key: Key("UserDetails"),
+                    userDetails: widget.userDetails,
                   ),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
@@ -116,45 +99,51 @@ class _HomeState extends State<Home> {
                       child: child,
                     );
                   },
-                  transitionDuration:
-                      Duration(milliseconds: 300), // Slower animation duration
+                  transitionDuration: Duration(milliseconds: 300),
                 ),
               );
             },
-            child: UserAccountsDrawerHeader(
-              key: Key("UserDetails"), // Use the same key for smooth animation
-              decoration: BoxDecoration(
-                color:
-                    Theme.of(context).primaryColor, // Match with current theme
-              ),
-              currentAccountPicture: CircleAvatar(
-                backgroundImage: NetworkImage(widget.userDetails
-                    .photoUrl), // Correct reference to static member
-                radius: 40, // Adjust the radius as needed
-              ),
-              accountName: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.userDetails.fullName,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+            child: Container(
+              color: Theme.of(context).primaryColor, // Use primary color
+              height: 150,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundImage:
+                          NetworkImage(widget.userDetails.photoUrl),
+                      radius: 40,
                     ),
-                  ),
-                  SizedBox(height: 2),
-                  Row(
-                    children: List.generate(
-                      widget.userDetails.rating,
-                      (index) =>
-                          Icon(Icons.star, color: Colors.yellow, size: 16),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            widget.userDetails.fullName,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Row(
+                            children: List.generate(
+                              widget.userDetails.rating,
+                              (index) => Icon(Icons.star,
+                                  color: Colors.yellow, size: 16),
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 2), // Add space under the rating stars
-                ],
+                  ],
+                ),
               ),
-              accountEmail: null, // Remove the default email field
             ),
           ),
           ListTile(
@@ -164,12 +153,6 @@ class _HomeState extends State<Home> {
               Navigator.pop(context);
               setState(() {
                 currentIndex = 0;
-                _pageController.animateToPage(
-                  currentIndex,
-                  duration:
-                      const Duration(milliseconds: 300), // Animation duration
-                  curve: Curves.easeInOut, // Smooth animation curve
-                );
               });
             },
           ),
@@ -180,30 +163,22 @@ class _HomeState extends State<Home> {
               Navigator.pop(context);
               setState(() {
                 currentIndex = 1;
-                _pageController.animateToPage(
-                  currentIndex,
-                  duration:
-                      const Duration(milliseconds: 300), // Animation duration
-                  curve: Curves.easeInOut, // Smooth animation curve
-                );
               });
             },
           ),
-          Divider(), // Add a divider before the logout button
+          Divider(),
           ListTile(
             leading: Icon(Icons.logout),
             title: Text('Logout'),
             onTap: () async {
-              // Handle logout action
               Navigator.pop(context);
-              await ApiHandler().logout(); // Call the logout method
+              await ApiHandler().logout();
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => Login(),
                 ),
               );
-              // Add your additional logout logic here if needed
             },
           ),
         ],
@@ -246,11 +221,6 @@ class _HomeState extends State<Home> {
       setState(() {
         currentIndex = 0;
       });
-      _pageController.animateToPage(
-        0,
-        duration: const Duration(milliseconds: 300), // Animation duration
-        curve: Curves.easeInOut, // Smooth animation curve
-      );
       return;
     }
     showDialog(
