@@ -212,6 +212,18 @@ class _HomeState extends State<Home> {
           ),
         ),
       ],
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              const Color.fromARGB(255, 247, 247, 247),
+              const Color.fromARGB(255, 247, 247, 247),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+      ),
     );
   }
 

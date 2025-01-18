@@ -27,8 +27,47 @@ class _DashboardFragementState extends State<DashboardFragement> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: appBar(),
+      backgroundColor:
+          const Color.fromARGB(255, 247, 247, 247), // Updated background color
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor:
+            const Color.fromARGB(255, 247, 247, 247), // Fixed background color
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Applied Events",
+              style: TextStyle(
+                color: Theme.of(context).primaryColor,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Roboto',
+              ),
+            ),
+            Text(
+              "Manage your applied events",
+              style: TextStyle(
+                color: Theme.of(context).highlightColor,
+                fontSize: 16,
+                fontFamily: 'Roboto',
+              ),
+            ),
+          ],
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                const Color.fromARGB(255, 247, 247, 247),
+                const Color.fromARGB(255, 247, 247, 247),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+        ),
+      ),
       body: RefreshIndicator(
         onRefresh: _refreshPage,
         color: Colors.blueAccent,
@@ -70,17 +109,6 @@ class _DashboardFragementState extends State<DashboardFragement> {
           },
         ),
       ),
-    );
-  }
-
-  AppBar appBar() {
-    return AppBar(
-      elevation: 0,
-      title: Container(
-        alignment: Alignment.center,
-        child: Text("Applied Events"),
-      ),
-      backgroundColor: Colors.white,
     );
   }
 
