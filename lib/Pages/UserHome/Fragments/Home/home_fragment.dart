@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wo1/ApiHandler/api_handler.dart';
 import 'package:wo1/Models/user_details.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Components/all_events_view.dart';
-import 'package:wo1/Pages/DetailsOfEvents/details_of_event.dart';
+import 'package:wo1/Pages/EventsShowPages/details_of_event.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Components/event_catagory_view.dart';
 import 'package:wo1/Models/events.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Handlers/event_handler.dart';
@@ -28,6 +28,7 @@ class _MainPage extends State<HomeFragment> {
   late final UserDetails userDetails;
   late EventHandler events;
   late stt.SpeechToText _speech;
+  late AllEventsView allEventsView;
 
   ScrollController singleChildScrollViewController = ScrollController();
   ScrollController listViewController = ScrollController();
@@ -38,21 +39,26 @@ class _MainPage extends State<HomeFragment> {
     userDetails = ApiHandler.userDetails;
     events = EventHandler(showEventDetails: showEventDetails);
     events.loadData();
+    allEventsView = AllEventsView(
+      events: events,
+      listViewController: listViewController,
+      refreshPage: refreshPage,
+    );
     _speech = stt.SpeechToText();
   }
 
   @override
   void didUpdateWidget(HomeFragment oldWidget) {
     super.didUpdateWidget(oldWidget);
-    events.loadData(); // Reload events when the widget is updated
+    //events.loadData(); // Reload events when the widget is updated
   }
 
   @override
   void dispose() {
+    super.dispose();
     catagoryScrollController.dispose();
     textEditingController.dispose();
     _speech.stop();
-    super.dispose();
   }
 
   @override
@@ -195,7 +201,6 @@ class _MainPage extends State<HomeFragment> {
             HeadingTextView(data: "Categories"),
             const SizedBox(height: 10),
             EventsCatagoryView(
-              events: events,
               catagoryScrollController: catagoryScrollController,
               filterEvents: (eventName) => setState(() {
                 events.filterEvents(eventName);
@@ -204,11 +209,7 @@ class _MainPage extends State<HomeFragment> {
             const SizedBox(height: 10),
             HeadingTextView(data: "All Events"),
             const SizedBox(height: 8),
-            AllEventsView(
-              events: events,
-              listViewController: listViewController,
-              refreshPage: refreshPage,
-            ),
+            allEventsView
           ],
         ),
       ),
