@@ -32,7 +32,6 @@ class _AllEventsViewState extends State<AllEventsView> {
 
   @override
   void dispose() {
-    widget.listViewController.dispose();
     super.dispose();
   }
 

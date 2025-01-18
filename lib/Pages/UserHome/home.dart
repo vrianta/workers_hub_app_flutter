@@ -21,8 +21,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int currentIndex = 0;
-  final ScrollController singleChildScrollViewController = ScrollController();
-  final ScrollController listViewController = ScrollController();
   final PageController _pageController = PageController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -42,10 +40,7 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    homeFragment = HomeFragment(
-      listViewController: listViewController,
-      singleChildScrollViewController: singleChildScrollViewController,
-    );
+    homeFragment = HomeFragment();
     dashboardFragement = DashboardFragement();
     notificationsFragment = NotificationsFragment();
     accountsFragement = AccountsFragment(isBusinessUser: false);
@@ -247,8 +242,6 @@ class _HomeState extends State<Home> {
 
   // Exit confirmation dialog
   void exitConfirmation() {
-    bool isScrollJumping = false;
-
     if (currentIndex > 0) {
       setState(() {
         currentIndex = 0;
@@ -259,21 +252,6 @@ class _HomeState extends State<Home> {
         curve: Curves.easeInOut, // Smooth animation curve
       );
       return;
-    } else {
-      if (singleChildScrollViewController.offset != 0) {
-        singleChildScrollViewController.animateTo(0,
-            duration: const Duration(seconds: 1), curve: Curves.linear);
-        isScrollJumping = true;
-      }
-      if (listViewController.offset != 0) {
-        listViewController.animateTo(0,
-            duration: const Duration(seconds: 1), curve: Curves.linear);
-        isScrollJumping = true;
-      }
-
-      if (isScrollJumping) {
-        return;
-      }
     }
     showDialog(
       context: context,

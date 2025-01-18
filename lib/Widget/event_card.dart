@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wo1/Models/events.dart';
 
 Widget eventCard(Event event, Function(Event) showEventDetails) {
   return GestureDetector(
-    onTap: () => {showEventDetails(event)},
+    onTap: () {
+      Fluttertoast.showToast(
+        msg: "Opening event details...",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.black54,
+        textColor: Colors.white,
+      );
+      showEventDetails(event);
+    },
     key: Key(event.eventID),
     child: Hero(
       tag: event.eventID,

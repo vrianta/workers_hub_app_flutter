@@ -12,6 +12,8 @@ class ViewController extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      showPerformanceOverlay: false, // Enable performance overlay
       theme: ThemeData(
         primaryColor: Colors.deepPurpleAccent,
         iconTheme: const IconThemeData(color: Colors.deepPurpleAccent),
@@ -61,8 +63,7 @@ class ViewController extends StatelessWidget {
         ),
         pageTransitionsTheme: const PageTransitionsTheme(
           builders: {
-            TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.iOS: ZoomPageTransitionsBuilder(),
           },
         ),
       ),

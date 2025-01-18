@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wo1/ApiHandler/api_handler.dart';
 import 'package:wo1/Models/user_details.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Components/all_events_view.dart';
-import 'package:wo1/Widget/details_of_event.dart';
+import 'package:wo1/Pages/DetailsOfEvents/details_of_event.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Components/event_catagory_view.dart';
 import 'package:wo1/Models/events.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Handlers/event_handler.dart';
@@ -10,13 +10,7 @@ import 'package:wo1/Widget/catagory_textview.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 class HomeFragment extends StatefulWidget {
-  final ScrollController singleChildScrollViewController;
-  final ScrollController listViewController;
-
-  const HomeFragment(
-      {required this.singleChildScrollViewController,
-      required this.listViewController,
-      super.key});
+  const HomeFragment({super.key});
 
   @override
   State<HomeFragment> createState() => _MainPage();
@@ -24,34 +18,37 @@ class HomeFragment extends StatefulWidget {
 
 class _MainPage extends State<HomeFragment> {
   bool isRefreshing = false;
-  late EventHandler events;
+  bool _isListening = false;
+  String _searchText = '';
   double previousOffset = 0;
 
   final ScrollController catagoryScrollController = ScrollController();
   final textEditingController = TextEditingController();
 
-  late stt.SpeechToText _speech;
-  bool _isListening = false;
-  String _searchText = '';
-
-  final GlobalKey _categoryKey = GlobalKey();
-  final GlobalKey _allEventsKey = GlobalKey();
   late final UserDetails userDetails;
+  late EventHandler events;
+  late stt.SpeechToText _speech;
+
+  ScrollController singleChildScrollViewController = ScrollController();
+  ScrollController listViewController = ScrollController();
 
   @override
   void initState() {
-    userDetails = ApiHandler.userDetails;
     super.initState();
-
+    userDetails = ApiHandler.userDetails;
     events = EventHandler(showEventDetails: showEventDetails);
     events.loadData();
     _speech = stt.SpeechToText();
   }
 
   @override
+  void didUpdateWidget(HomeFragment oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    events.loadData(); // Reload events when the widget is updated
+  }
+
+  @override
   void dispose() {
-    widget.singleChildScrollViewController.dispose();
-    widget.listViewController.dispose();
     catagoryScrollController.dispose();
     textEditingController.dispose();
     _speech.stop();
@@ -84,106 +81,6 @@ class _MainPage extends State<HomeFragment> {
     );
   }
 
-  Expanded body() {
-    return Expanded(
-      child: NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification notification) {
-          // widget.listViewController.hasClients
-          if (!widget.listViewController.hasClients) {
-            return false;
-          }
-          final currentOffset = widget.listViewController.offset;
-
-          if (currentOffset < previousOffset) {
-            // User swiped up, scrolling up
-            widget.singleChildScrollViewController.animateTo(
-              getScrollOffset(),
-              duration: Duration(milliseconds: 100),
-              curve: Curves.easeOut,
-            );
-          } else if (currentOffset > previousOffset) {
-            // User swiped down, scrolling down
-            widget.singleChildScrollViewController.animateTo(
-              getScrollOffset(),
-              duration: Duration(milliseconds: 100),
-              curve: Curves.easeOut,
-            );
-          }
-
-          previousOffset = currentOffset;
-          return true;
-        },
-        child: ListView(
-          controller: widget.singleChildScrollViewController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          children: [
-            const SizedBox(height: 8),
-            HeadingTextView(data: "Categories", key: _categoryKey),
-            const SizedBox(height: 10),
-            EventsCatagoryView(
-              events: events,
-              catagoryScrollController: catagoryScrollController,
-              filterEvents: (eventName) => {
-                setState(() {
-                  events.filterEvents(eventName);
-                }),
-              },
-            ),
-            const SizedBox(height: 10),
-            HeadingTextView(data: "All Events", key: _allEventsKey),
-            const SizedBox(height: 8),
-            AllEventsView(
-              events: events,
-              listViewController: widget.listViewController,
-              refreshPage: refreshPage,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Padding searchBar() {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8.0),
-          boxShadow: [
-            BoxShadow(
-              color: const Color.fromARGB(85, 158, 158, 158),
-              spreadRadius: 5,
-              blurRadius: 15,
-              offset: Offset(0, 3), // changes position of shadow
-            ),
-          ],
-        ),
-        child: TextField(
-          decoration: InputDecoration(
-            prefixIcon: IconButton(
-              icon: Icon(Icons.mic_outlined,
-                  color: Theme.of(context).primaryColor),
-              onPressed: _listen,
-            ),
-            suffixIcon: IconButton(
-              icon: Icon(Icons.search_outlined,
-                  color: Theme.of(context).primaryColor),
-              onPressed: () {
-                filterEvents();
-              },
-            ),
-            hintText: 'Search Events',
-            border: InputBorder.none, // No border
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
-          ),
-          controller: textEditingController,
-        ),
-      ),
-    );
-  }
-
   AppBar appBar() {
     return AppBar(
       key: const Key("AppBar"),
@@ -195,17 +92,17 @@ class _MainPage extends State<HomeFragment> {
             "Apply For Events",
             style: TextStyle(
               color: Theme.of(context).primaryColor,
-              fontSize: 22, // Increased font size
+              fontSize: 22,
               fontWeight: FontWeight.bold,
-              fontFamily: 'Roboto', // Changed font family
+              fontFamily: 'Roboto',
             ),
           ),
           Text(
             "Get a Partime job is now easy",
             style: TextStyle(
               color: Theme.of(context).highlightColor,
-              fontSize: 16, // Increased font size
-              fontFamily: 'Roboto', // Changed font family
+              fontSize: 16,
+              fontFamily: 'Roboto',
             ),
           ),
         ],
@@ -225,22 +122,112 @@ class _MainPage extends State<HomeFragment> {
     );
   }
 
+  Padding searchBar() {
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8.0),
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(85, 158, 158, 158),
+              spreadRadius: 5,
+              blurRadius: 15,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: TextField(
+          decoration: InputDecoration(
+            prefixIcon: IconButton(
+              icon: Icon(Icons.mic_outlined,
+                  color: Theme.of(context).primaryColor),
+              onPressed: _listen,
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(Icons.search_outlined,
+                  color: Theme.of(context).primaryColor),
+              onPressed: filterEvents,
+            ),
+            hintText: 'Search Events',
+            border: InputBorder.none,
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+          ),
+          controller: textEditingController,
+        ),
+      ),
+    );
+  }
+
+  Expanded body() {
+    return Expanded(
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification notification) {
+          if (!listViewController.hasClients) {
+            return false;
+          }
+          final currentOffset = listViewController.offset;
+
+          if (currentOffset < previousOffset) {
+            singleChildScrollViewController.animateTo(
+              getScrollOffset(),
+              duration: Duration(milliseconds: 100),
+              curve: Curves.easeOut,
+            );
+          } else if (currentOffset > previousOffset) {
+            singleChildScrollViewController.animateTo(
+              getScrollOffset(),
+              duration: Duration(milliseconds: 100),
+              curve: Curves.easeOut,
+            );
+          }
+
+          previousOffset = currentOffset;
+          return true;
+        },
+        child: ListView(
+          controller: singleChildScrollViewController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            const SizedBox(height: 8),
+            HeadingTextView(data: "Categories"),
+            const SizedBox(height: 10),
+            EventsCatagoryView(
+              events: events,
+              catagoryScrollController: catagoryScrollController,
+              filterEvents: (eventName) => setState(() {
+                events.filterEvents(eventName);
+              }),
+            ),
+            const SizedBox(height: 10),
+            HeadingTextView(data: "All Events"),
+            const SizedBox(height: 8),
+            AllEventsView(
+              events: events,
+              listViewController: listViewController,
+              refreshPage: refreshPage,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   double getScrollOffset() {
-    // For upward swipe: Decrease the scroll offset slightly
-    if (widget.listViewController.offset < previousOffset &&
-        widget.singleChildScrollViewController.offset > 0) {
-      return (widget.singleChildScrollViewController.offset - 50).clamp(
-          0, widget.singleChildScrollViewController.position.maxScrollExtent);
+    if (listViewController.offset < previousOffset &&
+        singleChildScrollViewController.offset > 0) {
+      return (singleChildScrollViewController.offset - 50)
+          .clamp(0, singleChildScrollViewController.position.maxScrollExtent);
     }
 
-    // For downward swipe: Increase the scroll offset slightly
-    if (widget.listViewController.offset > previousOffset) {
-      return (widget.singleChildScrollViewController.offset + 50).clamp(
-          0, widget.singleChildScrollViewController.position.maxScrollExtent);
+    if (listViewController.offset > previousOffset) {
+      return (singleChildScrollViewController.offset + 50)
+          .clamp(0, singleChildScrollViewController.position.maxScrollExtent);
     }
 
-    // Default case: Return current offset
-    return widget.singleChildScrollViewController.offset;
+    return singleChildScrollViewController.offset;
   }
 
   Future<void> refreshPage() async {
@@ -273,7 +260,6 @@ class _MainPage extends State<HomeFragment> {
       );
       if (available) {
         setState(() => _isListening = true);
-        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Listening...')),
         );
@@ -281,7 +267,6 @@ class _MainPage extends State<HomeFragment> {
           onResult: (val) => setState(() {
             _searchText = val.recognizedWords;
             textEditingController.text = _searchText;
-            // Update the search field with the recognized text
           }),
         );
       }
@@ -298,12 +283,12 @@ class _MainPage extends State<HomeFragment> {
   }
 
   void _scrollToTop() {
-    widget.singleChildScrollViewController.animateTo(
+    singleChildScrollViewController.animateTo(
       0,
       duration: Duration(milliseconds: 500),
       curve: Curves.easeInOut,
     );
-    widget.listViewController.animateTo(
+    listViewController.animateTo(
       0,
       duration: Duration(milliseconds: 500),
       curve: Curves.easeInOut,

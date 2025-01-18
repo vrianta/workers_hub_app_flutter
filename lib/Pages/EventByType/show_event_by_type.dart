@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:wo1/Models/events.dart';
+import 'package:wo1/Pages/DetailsOfEvents/details_of_event.dart';
 import 'event_handler.dart';
 
 class ShowEventByType extends StatefulWidget {
@@ -7,13 +9,12 @@ class ShowEventByType extends StatefulWidget {
   const ShowEventByType({super.key, required this.eventType});
 
   @override
-  _ShowEventByTypeState createState() => _ShowEventByTypeState();
+  State<ShowEventByType> createState() => _ShowEventByTypeState();
 }
 
 class _ShowEventByTypeState extends State<ShowEventByType> {
   late Future<List<Widget>> eventCards;
-  final EventByTypeHandler eventHandler =
-      EventByTypeHandler(showEventDetails: (event) {});
+  late final EventByTypeHandler eventHandler;
   int _eventsToShow = 10;
   int _lastShownIndex = 0;
   bool _isLoadingMore = false;
@@ -22,6 +23,7 @@ class _ShowEventByTypeState extends State<ShowEventByType> {
   @override
   void initState() {
     super.initState();
+    eventHandler = EventByTypeHandler(showEventDetails: showEventDetails);
     eventCards = _loadEventsByType();
   }
 
@@ -262,4 +264,18 @@ class _ShowEventByTypeState extends State<ShowEventByType> {
             ),
     );
   }
+
+  void showEventDetails(Event event) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EventDetailsPage(
+          event: event,
+          onClose: () => {Navigator.pop(context)},
+        ),
+      ),
+    );
+  }
+
+  refreshPage() {}
 }
