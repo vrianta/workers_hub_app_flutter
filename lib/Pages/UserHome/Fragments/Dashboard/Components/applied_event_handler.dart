@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:wo1/ApiHandler/api_handler.dart';
 import 'package:wo1/Models/events.dart';
+import 'package:wo1/Widget/event_card.dart';
 
 class AppliedEventHandler {
   ApiHandler apiHandler = ApiHandler();
@@ -71,75 +72,7 @@ class AppliedEventHandler {
     }
 
     return events.map((event) {
-      return GestureDetector(
-        onTap: () => {showEventDetails(event)},
-        key: Key(event.eventID),
-        child: Card(
-          elevation: 5,
-          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Event Type
-                Text(
-                  event.eventType,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
-                ),
-                SizedBox(height: 8),
-
-                // Event Location
-                Text(
-                  'Location: ${event.eventLocation}',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black54,
-                  ),
-                ),
-                SizedBox(height: 8),
-
-                // Event Date and Time
-                Text(
-                  'Date: ${event.eventDate} | Time: ${event.eventTime}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                  ),
-                ),
-                SizedBox(height: 8),
-
-                // Event Requirement
-                Text(
-                  'Requirement: ${event.eventRequirement} people',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black54,
-                  ),
-                ),
-                SizedBox(height: 8),
-
-                // Event Budget
-                Text(
-                  'Budget: \$${event.eventBudget}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.green,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
+      return eventCard(event, showEventDetails);
     }).toList();
   }
 
