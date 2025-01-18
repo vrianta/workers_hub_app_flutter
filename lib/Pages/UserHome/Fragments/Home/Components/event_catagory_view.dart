@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Handlers/event_handler.dart';
+import 'package:wo1/Pages/EventByType/show_event_by_type.dart';
 
 class EventsCatagoryView extends StatelessWidget {
   const EventsCatagoryView({
@@ -29,7 +30,14 @@ class EventsCatagoryView extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Widget> eventTypesCards = eventTypes.map((type) {
       return GestureDetector(
-        onTap: () => filterEvents(type["name"]),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ShowEventByType(eventType: type["name"]),
+            ),
+          );
+        },
         child: Center(
           child: SizedBox(
             width: 140,

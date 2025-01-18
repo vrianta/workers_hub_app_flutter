@@ -14,6 +14,10 @@ class _ShowEventByTypeState extends State<ShowEventByType> {
   late Future<List<Widget>> eventCards;
   final EventByTypeHandler eventHandler =
       EventByTypeHandler(showEventDetails: (event) {});
+  int _eventsToShow = 10;
+  int _lastShownIndex = 0;
+  bool _isLoadingMore = false;
+  List<Widget> visibleEventCards = [];
 
   @override
   void initState() {
@@ -214,11 +218,48 @@ class _ShowEventByTypeState extends State<ShowEventByType> {
               child: Text("No Events Found"),
             );
           }
-          return ListView(
-            children: snapshot.data!,
+
+          if (visibleEventCards.isEmpty) {
+            visibleEventCards
+                .addAll(snapshot.data!.sublist(_lastShownIndex, _eventsToShow));
+          }
+
+          return ListView.separated(
+            itemCount: visibleEventCards.length + 1,
+            separatorBuilder: (context, index) => const SizedBox(height: 10),
+            itemBuilder: (context, index) {
+              if (index == visibleEventCards.length) {
+                return _buildLoadMoreButton();
+              }
+              return visibleEventCards[index];
+            },
           );
         },
       ),
+    );
+  }
+
+  Widget _buildLoadMoreButton() {
+    return Center(
+      child: _isLoadingMore
+          ? const CircularProgressIndicator()
+          : ElevatedButton(
+              onPressed: () async {
+                setState(() {
+                  _isLoadingMore = true;
+                });
+                await eventHandler.loadData(widget.eventType); // Load more data
+                final newEventCards = await _loadEventsByType();
+                setState(() {
+                  _lastShownIndex = _eventsToShow;
+                  _eventsToShow += 10;
+                  visibleEventCards.addAll(
+                      newEventCards.sublist(_lastShownIndex, _eventsToShow));
+                  _isLoadingMore = false;
+                });
+              },
+              child: const Text("Load More"),
+            ),
     );
   }
 }
