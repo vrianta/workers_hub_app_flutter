@@ -19,22 +19,16 @@ class _LoginState extends State<Login> {
   final TextEditingController passwordController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     userNameController.dispose();
     passwordController.dispose();
     super.dispose();
   }
 
-  // ignore: empty_constructor_bodies
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      future: loadStoredCreds(context), // Assuming this is a Future<bool>
+      future: loadStoredCreds(context),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return MaterialApp(
@@ -45,20 +39,17 @@ class _LoginState extends State<Login> {
                   backgroundColor: Colors.amber,
                   color: Colors.black,
                 ),
-              ), // Show loading while waiting for the result
+              ),
             ),
           );
         }
-        // If credentials are found (true)
         if (snapshot.hasData && snapshot.data!) {
-          // Show an empty page
           return MaterialApp(
             home: Scaffold(
-              body: Container(), // Empty page, just a blank container
+              body: Container(),
             ),
           );
         }
-        // If login page is needed (no credentials found)
         return MaterialApp(
           home: Scaffold(
             body: Center(
@@ -100,24 +91,15 @@ class _LoginState extends State<Login> {
 
   Future<bool> loadStoredCreds(BuildContext context) async {
     const storage = FlutterSecureStorage();
-
-    // Await the future to get the actual value
     String? username = await storage.read(key: "username");
     String? password = await storage.read(key: "password");
 
-    // Assign the values to the text controllers
-    userNameController.text = username ?? ''; // Default to empty if null
-    passwordController.text = password ?? ''; // Default to empty if null
+    userNameController.text = username ?? '';
+    passwordController.text = password ?? '';
 
     if (username != null && password != null) {
-      // ignore: use_build_context_synchronously
-      return onpressedLoginButton(
-        // ignore: use_build_context_synchronously
-        userNameController,
-        passwordController,
-      );
+      return onpressedLoginButton(userNameController, passwordController);
     }
-
     return false;
   }
 
@@ -131,12 +113,12 @@ class _LoginState extends State<Login> {
           const Color.fromARGB(146, 250, 7, 7));
       return false;
     }
+
     ApiHandler apiHandler = ApiHandler();
     await apiHandler.login(userName, password);
     var responseObj = jsonDecode(apiHandler.response);
 
     if (responseObj["CODE"] == "RELOGIN") {
-      // Auto login
       await apiHandler.login(userName, password);
       responseObj = jsonDecode(apiHandler.response);
     }
@@ -171,13 +153,13 @@ class _LoginState extends State<Login> {
     return (userName.isEmpty || password.isEmpty);
   }
 
-  void showToast(String? massage, Color? testColor) async {
+  void showToast(String? message, Color? testColor) async {
     await Fluttertoast.showToast(
-      msg: massage ?? "Internal Error Occured",
+      msg: message ?? "Internal Error Occurred",
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
+      backgroundColor: testColor,
       textColor: Colors.white,
       fontSize: 14.0,
     );
@@ -185,7 +167,6 @@ class _LoginState extends State<Login> {
 
   void storeCreds(String userName, String password) async {
     var storage = FlutterSecureStorage();
-
     storage.write(key: "username", value: userName);
     storage.write(key: "password", value: password);
   }
