@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wo1/ApiHandler/api_handler.dart';
 import 'package:wo1/Models/user_details.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Components/all_events_view.dart';
-import 'package:wo1/Pages/EventsShowPages/details_of_event.dart';
+import 'package:wo1/Pages/EventsShow/details_of_event.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Components/event_catagory_view.dart';
 import 'package:wo1/Models/events.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Handlers/event_handler.dart';
@@ -174,6 +174,10 @@ class _MainPage extends State<HomeFragment> {
           if (!listViewController.hasClients) {
             return false;
           }
+
+          if (listViewController.position.atEdge) {
+            //loadmo
+          }
           final currentOffset = listViewController.offset;
 
           if (currentOffset < previousOffset) {
@@ -295,4 +299,6 @@ class _MainPage extends State<HomeFragment> {
       curve: Curves.easeInOut,
     );
   }
+
+  void loadMore() {}
 }

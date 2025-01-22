@@ -14,7 +14,7 @@ class EventHandler {
 
   // Static map to store category image paths
   static const Map<String, String> categoryImagePaths = {
-    "b'day": "lib/assets/images/birthday.jpg",
+    "birthday": "lib/assets/images/birthday.jpg",
     "meeting": "lib/assets/images/meeting.jpg",
     "conference": "lib/assets/images/conference.jpg",
     "event": "lib/assets/images/event.jpg",

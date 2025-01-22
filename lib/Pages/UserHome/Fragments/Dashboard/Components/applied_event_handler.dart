@@ -72,7 +72,7 @@ class AppliedEventHandler {
     }
 
     return events.map((event) {
-      return eventCard(event, showEventDetails);
+      return appliedEventCard(event, showEventDetails);
     }).toList();
   }
 

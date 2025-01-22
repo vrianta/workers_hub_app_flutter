@@ -1,6 +1,7 @@
 class UserDetails {
   String userId;
   String fullName;
+  String email;
   String phoneNumber;
   String photoUrl;
   int rating;
@@ -14,6 +15,7 @@ class UserDetails {
   UserDetails({
     required this.userId,
     required this.fullName,
+    required this.email,
     required this.phoneNumber,
     required this.photoUrl,
     required this.rating,
@@ -28,6 +30,7 @@ class UserDetails {
   Future<void> fromJson(Map<String, dynamic> json) async {
     userId = json['UserId'];
     fullName = json['FullName'];
+    email = json['Email'];
     phoneNumber = json['PhoneNumber'];
     photoUrl = json['PhotoURL'];
     rating = json['Rating'];

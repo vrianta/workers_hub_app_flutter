@@ -24,7 +24,7 @@ Widget customTextField({
 var usernameTextField =
     (TextEditingController userNameController) => customTextField(
           controller: userNameController,
-          labelText: 'Phone Number',
+          labelText: 'Adhar Card Number',
           prefixIcon: Icons.phone_android,
           maxLength: 12,
         );

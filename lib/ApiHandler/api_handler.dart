@@ -22,6 +22,7 @@ class ApiHandler {
   static UserDetails userDetails = UserDetails(
     userId: "userId",
     fullName: "fullName",
+    email: "demo@mail.com",
     phoneNumber: "phoneNumber",
     photoUrl: "photoUrl",
     rating: 0,
@@ -142,15 +143,11 @@ class ApiHandler {
   }
 
   // Login method
-  Future<String> updateUser(String fullName, String phoneNumber, dateOfBirth,
-      height, String text) async {
+  Future<String> updateUser(String email) async {
     await _initResponse("update-user", {
       "uid": uid,
       "token": api_token,
-      "full_name": fullName,
-      "phone_number": phoneNumber,
-      "data_of_birth": dateOfBirth,
-      "height": height,
+      "email": email,
     });
     return response;
   }

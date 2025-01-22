@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Handlers/event_handler.dart';
 
@@ -65,8 +67,8 @@ class _AllEventsViewState extends State<AllEventsView> {
           }
 
           if (visibleEventCards.isEmpty) {
-            visibleEventCards
-                .addAll(snapshot.data!.sublist(_lastShownIndex, _eventsToShow));
+            visibleEventCards.addAll(snapshot.data!.sublist(
+                _lastShownIndex, min(snapshot.data!.length, _eventsToShow)));
           }
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -109,7 +111,11 @@ class _AllEventsViewState extends State<AllEventsView> {
                   _lastShownIndex = _eventsToShow;
                   _eventsToShow += 10;
                   visibleEventCards.addAll(
-                      newEventCards.sublist(_lastShownIndex, _eventsToShow));
+                    newEventCards.sublist(
+                      _lastShownIndex,
+                      min(newEventCards.length, _eventsToShow),
+                    ),
+                  );
                   _isLoadingMore = false;
                 });
               },

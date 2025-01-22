@@ -20,6 +20,8 @@ class _LoginState extends State<Login> {
   final TextEditingController passwordController = TextEditingController();
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
+  final String login = "Login";
+
   @override
   void dispose() {
     userNameController.dispose();
@@ -177,7 +179,7 @@ class _LoginState extends State<Login> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const Text(
-                        'Login',
+                        "Login",
                         style: TextStyle(fontSize: 24, color: Colors.black),
                         textAlign: TextAlign.left,
                       ),

@@ -176,9 +176,100 @@ Widget eventCard(Event event, Function(Event) showEventDetails) {
   );
 }
 
+Widget appliedEventCard(Event event, Function(Event) showEventDetails) {
+  return GestureDetector(
+    onTap: () {
+      Fluttertoast.showToast(
+        msg: "Opening event details...",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.black54,
+        textColor: Colors.white,
+      );
+      showEventDetails(event);
+    },
+    child: Padding(
+      padding: EdgeInsets.only(left: 10, right: 10),
+      child: Card(
+        color: Colors.white,
+        elevation: 2,
+        child: Padding(
+          padding: EdgeInsets.all(15),
+          child: Column(
+            spacing: 5,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.add_task_outlined,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        event.eventName,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        event.eventDate,
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.calendar_today,
+                        color: Colors.deepPurpleAccent,
+                        size: 16,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.location_on,
+                        size: 15,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        event.eventLocation,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        event.eventTime,
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.access_time,
+                        size: 16,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 String getCategoryImagePath(String eventType) {
   const Map<String, String> categoryImagePaths = {
-    "b'day": "lib/assets/images/birthday.jpg",
+    "birthday": "lib/assets/images/birthday.jpg",
     "meeting": "lib/assets/images/meeting.jpg",
     "conference": "lib/assets/images/conference.jpg",
     "event": "lib/assets/images/event.jpg",

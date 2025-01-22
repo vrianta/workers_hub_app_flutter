@@ -8,7 +8,7 @@ import 'package:wo1/Pages/UserHome/Fragments/Accounts/Page/accounts_details_edit
 import 'package:wo1/Pages/UserHome/Fragments/Home/home_fragment.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Accounts/accounts_fragment.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Dashboard/dashboard_fragment.dart';
-import 'package:wo1/Pages/UserHome/Fragments/notifications_fragment.dart';
+import 'package:wo1/Pages/UserHome/Components/Notifications/notifications_fragment.dart';
 import 'package:wo1/Pages/UserActivationRequest/user_activation_request.dart';
 
 class Home extends StatefulWidget {

@@ -1,6 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:wo1/Models/events.dart';
-import 'package:wo1/Pages/EventsShowPages/details_of_event.dart';
+import 'package:wo1/Pages/EventsShow/details_of_event.dart';
 import 'event_handler.dart';
 
 class ShowEventByType extends StatefulWidget {
@@ -222,8 +224,8 @@ class _ShowEventByTypeState extends State<ShowEventByType> {
           }
 
           if (visibleEventCards.isEmpty) {
-            visibleEventCards
-                .addAll(snapshot.data!.sublist(_lastShownIndex, _eventsToShow));
+            visibleEventCards.addAll(snapshot.data!.sublist(
+                _lastShownIndex, min(snapshot.data!.length, _eventsToShow)));
           }
 
           return ListView.separated(
@@ -255,8 +257,9 @@ class _ShowEventByTypeState extends State<ShowEventByType> {
                 setState(() {
                   _lastShownIndex = _eventsToShow;
                   _eventsToShow += 10;
-                  visibleEventCards.addAll(
-                      newEventCards.sublist(_lastShownIndex, _eventsToShow));
+                  visibleEventCards.addAll(newEventCards.sublist(
+                      _lastShownIndex,
+                      min(newEventCards.length, _eventsToShow)));
                   _isLoadingMore = false;
                 });
               },
