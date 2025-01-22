@@ -17,6 +17,7 @@ class ApiHandler {
   // ignore: non_constant_identifier_names
   static String api_token = '';
   static String uid = '';
+  static String isActivated = '';
   static String accountType = '';
   static UserDetails userDetails = UserDetails(
     userId: "userId",
@@ -46,11 +47,34 @@ class ApiHandler {
   }
 
   // Register method
-  Future<void> register(String userid, String fullName, String password) async {
+  Future<String> register(
+    String userid,
+    String fullName,
+    String password,
+    String emailId,
+    String phoneNumber,
+  ) async {
     await _initResponse("register", {
       "uid": userid,
       "fullname": fullName,
       "password": password,
+      "phone_number": phoneNumber,
+      "email": emailId,
+    });
+
+    return response;
+  }
+
+  // Register method with OTP
+  Future<void> registerWithOtp(String userid, String fullName, String password,
+      String emailId, String phoneNumber, String otp) async {
+    await _initResponse("register", {
+      "uid": userid,
+      "fullname": fullName,
+      "password": password,
+      "phone_number": phoneNumber,
+      "email": emailId,
+      "otp": otp,
     });
   }
 

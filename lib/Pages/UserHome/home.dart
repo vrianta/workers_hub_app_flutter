@@ -2,18 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:wo1/Alerts/one_exit.dart';
 import 'package:wo1/APIHandler/api_handler.dart';
 import 'package:wo1/Models/user_details.dart';
-import 'package:wo1/Pages/Login/login_ui.dart';
+import 'package:wo1/Pages/Authentication/Pages/login_ui.dart';
 import 'package:wo1/Pages/UserHome/Components/buttom_navigation.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Accounts/Page/accounts_details_edite.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/home_fragment.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Accounts/accounts_fragment.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Dashboard/dashboard_fragment.dart';
 import 'package:wo1/Pages/UserHome/Fragments/notifications_fragment.dart';
+import 'package:wo1/Pages/UserActivationRequest/user_activation_request.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key, required this.userDetails});
+  const Home({super.key, required this.userDetails, required this.isActivated});
 
   final UserDetails userDetails;
+  final String isActivated;
 
   @override
   State<Home> createState() => _HomeState();
@@ -41,6 +43,13 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.isActivated == "0") {
+      return UserNotActivated(userDetails: widget.userDetails);
+    }
+    return body();
+  }
+
+  Scaffold body() {
     return Scaffold(
       key: _scaffoldKey,
       appBar: appBar(),
