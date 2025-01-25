@@ -21,8 +21,10 @@ class _CreateEventState extends State<CreateEvent> {
   final TextEditingController _requirementController = TextEditingController();
   final TextEditingController _budgetController = TextEditingController();
   final TextEditingController _minHeightController = TextEditingController();
-  final TextEditingController _minRatingController = TextEditingController();
-  final TextEditingController _minAgeController = TextEditingController();
+  final TextEditingController _minRatingController =
+      TextEditingController(text: "1");
+  final TextEditingController _minAgeController =
+      TextEditingController(text: "18");
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
@@ -42,95 +44,106 @@ class _CreateEventState extends State<CreateEvent> {
       appBar: AppBar(
         title: const Text("Create Event"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              _buildSection("Event Name", _eventNameController),
-              const Divider(),
-              _buildDropdownSection(
-                  "Select Event Type",
-                  _eventType,
-                  Event.eventCategories.entries.map((element) {
-                    return DropdownMenuItem<String>(
-                      value: element.key,
-                      child: Text(element.key),
-                    );
-                  }).toList(), (value) {
+      body: Stack(
+        children: [
+          body(),
+
+          // If the process is initiated, show the loading indicator
+          if (isCreateInitiated)
+            Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Padding body() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Form(
+        key: _formKey,
+        child: ListView(
+          children: [
+            _buildSection("Event Name", _eventNameController),
+            _buildDropdownSection(
+                "Select Event Type",
+                _eventType,
+                Event.eventCategories.entries.map((element) {
+                  return DropdownMenuItem<String>(
+                    value: element.key,
+                    child: Text(element.key),
+                  );
+                }).toList(), (value) {
+              setState(() {
+                _eventType = value;
+              });
+            }),
+            _buildSection("Number of People Required", _requirementController,
+                keyboardType: TextInputType.number),
+            _buildSection("Event Budget", _budgetController,
+                keyboardType: TextInputType.number),
+            _buildHeightField(),
+            _buildDropdownSection(
+              "Minimum Rating",
+              "1",
+              [
+                DropdownMenuItem(value: "0", child: Text("0")),
+                DropdownMenuItem(value: "1", child: Text("1")),
+                DropdownMenuItem(value: "2", child: Text("2")),
+                DropdownMenuItem(value: "3", child: Text("3")),
+                DropdownMenuItem(value: "4", child: Text("4")),
+                DropdownMenuItem(value: "5", child: Text("5"))
+              ],
+              (value) {
                 setState(() {
-                  _eventType = value;
+                  _minRatingController.text = value!;
                 });
-              }),
-              const Divider(),
-              _buildSection("Number of People Required", _requirementController,
-                  keyboardType: TextInputType.number),
-              const Divider(),
-              _buildSection("Event Budget", _budgetController,
-                  keyboardType: TextInputType.number),
-              const Divider(),
-              _buildHeightField(),
-              const Divider(),
-              _buildDropdownSection(
-                "Minimum Rating",
-                "1",
-                [
-                  DropdownMenuItem(value: "0", child: Text("0")),
-                  DropdownMenuItem(value: "1", child: Text("1")),
-                  DropdownMenuItem(value: "2", child: Text("2")),
-                  DropdownMenuItem(value: "3", child: Text("3")),
-                  DropdownMenuItem(value: "4", child: Text("4")),
-                  DropdownMenuItem(value: "5", child: Text("5"))
-                ],
-                (value) {
-                  setState(() {
-                    _minRatingController.text = value!;
-                  });
-                },
+              },
+            ),
+            _buildSection("Minimum Age for Resources", _minAgeController,
+                keyboardType: TextInputType.number),
+            _buildDateField("Event Date", _dateController, _selectDate),
+            _buildDateField("Event Time", _timeController, _selectTime),
+            _buildSwitchRow("Is Food Provided?", _foodProvided, (value) {
+              setState(() {
+                _foodProvided = value;
+              });
+            }),
+            _buildDropdownSection(
+                "Preferred Language",
+                _language,
+                Languages.supportedLanguages.map((element) {
+                  return DropdownMenuItem<String>(
+                    value: element,
+                    child: Text(element),
+                  );
+                }).toList(), (value) {
+              setState(() {
+                _language = value;
+              });
+            }),
+            _buildSection("Event Location", _locationController),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).primaryColor,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
-              const Divider(),
-              _buildSection("Minimum Age for Resources", _minAgeController,
-                  keyboardType: TextInputType.number),
-              const Divider(),
-              _buildDateField("Event Date", _dateController, _selectDate),
-              const Divider(),
-              _buildDateField("Event Time", _timeController, _selectTime),
-              const Divider(),
-              _buildSwitchRow("Is Food Provided?", _foodProvided, (value) {
-                setState(() {
-                  _foodProvided = value;
-                });
-              }),
-              const Divider(),
-              _buildDropdownSection(
-                  "Preferred Language",
-                  _language,
-                  Languages.supportedLanguages.map((element) {
-                    return DropdownMenuItem<String>(
-                      value: element,
-                      child: Text(element),
-                    );
-                  }).toList(), (value) {
-                setState(() {
-                  _language = value;
-                });
-              }),
-              const Divider(),
-              _buildSection("Event Location", _locationController),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _submitForm();
-                  }
-                },
-                child: !isCreateInitiated
-                    ? const Text("Create Event")
-                    : CircularProgressIndicator(),
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  await _submitForm();
+                }
+              },
+              child: const Text(
+                "Create Event",
+                style: TextStyle(color: Colors.white),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -215,11 +228,7 @@ class _CreateEventState extends State<CreateEvent> {
       children: [
         _buildTitleWithInfo(title),
         const SizedBox(height: 8),
-        SwitchListTile(
-          value: value,
-          onChanged: onChanged,
-          title: const Text("Food Provided"),
-        ),
+        Switch(value: value, onChanged: onChanged)
       ],
     );
   }
@@ -389,6 +398,9 @@ class _CreateEventState extends State<CreateEvent> {
   }
 
   Future<void> _submitForm() async {
+    setState(() {
+      isCreateInitiated = true;
+    });
     ApiHandler apiHandler = ApiHandler();
 
     String respose = await apiHandler.createEvent(
@@ -408,21 +420,29 @@ class _CreateEventState extends State<CreateEvent> {
 
     Map<String, dynamic> resposeObj = jsonDecode(respose);
     if (resposeObj.entries.isEmpty) {
+      setState(() {
+        isCreateInitiated = false;
+      });
       return;
     }
 
     // ignore: collection_methods_unrelated_type
     if (resposeObj["SUCCESS"] != true) {
       Fluttertoast.showToast(msg: resposeObj["MESSAGE"]);
+      setState(() {
+        isCreateInitiated = false;
+      });
       return;
     }
 
     // ignore: collection_methods_unrelated_type
-    if (resposeObj.entries.contains("CODE") &&
-        resposeObj["CODE"] == "EVENTCREATED") {}
-    Fluttertoast.showToast(msg: "Event Created");
-    Navigator.pop(context);
-    // TODO: Call the `createEvent` function from ApiHandler here
+    if (resposeObj["CODE"] == "EVENTCREATED") {
+      setState(() {
+        isCreateInitiated = false;
+      });
+      Navigator.pop(context);
+      Fluttertoast.showToast(msg: "Event Created");
+    }
   }
 
   @override
