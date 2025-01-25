@@ -93,13 +93,11 @@ class _DashboardFragementState extends State<DashboardFragement> {
               padding: const EdgeInsets.symmetric(),
               child: SizedBox(
                 height: MediaQuery.of(context).size.height,
-                child: ListView.separated(
-                  shrinkWrap: true,
+                child: ListView.builder(
+                  shrinkWrap: false,
+                  padding: EdgeInsets.all(0),
                   scrollDirection: Axis.vertical,
                   itemCount: eventCards!.length,
-                  separatorBuilder: (context, index) {
-                    return SizedBox(height: 0);
-                  },
                   itemBuilder: (context, index) {
                     return eventCards[index];
                   },

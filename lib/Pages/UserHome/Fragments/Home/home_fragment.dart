@@ -198,6 +198,7 @@ class _MainPage extends State<HomeFragment> {
           return true;
         },
         child: ListView(
+          // reverse: true,
           controller: singleChildScrollViewController,
           physics: const AlwaysScrollableScrollPhysics(),
           children: [

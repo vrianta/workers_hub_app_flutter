@@ -53,19 +53,27 @@ class _EventDetailsPageState extends State<AppliedEventDetailsPage> {
                 ],
               ),
             ),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  withdrawEvent(widget.event.eventID);
-                },
-                child: Text('Withdraw'),
-              ),
-            ),
+            widrawButton(widget.event),
           ],
         ),
       ),
     );
+  }
+
+  SizedBox widrawButton(Event e) {
+    if (e.confirmed == 0) {
+      return SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: () {
+            withdrawEvent(widget.event.eventID);
+          },
+          child: Text('Withdraw'),
+        ),
+      );
+    }
+
+    return SizedBox(height: 0);
   }
 
   Widget _buildDetailRow(String title, String value) {

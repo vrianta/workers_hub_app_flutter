@@ -13,6 +13,7 @@ class Event {
   final String? eventLanguage;
   final String eventLocation;
   final String ownerID;
+  final int confirmed;
 
   Event({
     required this.eventID,
@@ -29,6 +30,7 @@ class Event {
     this.eventLanguage,
     required this.eventLocation,
     required this.ownerID,
+    required this.confirmed,
   });
 
   // Factory constructor to create an Event from a JSON object
@@ -49,6 +51,7 @@ class Event {
       eventLanguage: json['language'],
       eventLocation: json['location'],
       ownerID: json['owner_id'],
+      confirmed: json['Confirmed'],
     );
   }
 }

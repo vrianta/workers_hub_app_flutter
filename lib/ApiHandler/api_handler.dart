@@ -10,7 +10,8 @@ class ApiHandler {
   // Constructor
 
   // ignore: constant_identifier_names
-  static const String APISERVERADDRESS = "http://192.168.1.105:8082";
+  static const String APISERVERADDRESS = "https://wo1.api.vrianta.in";
+  // static const String APISERVERADDRESS = "http://192.168.0.104:8080";
   static List<String> cookies = [];
   static String? cookieHeader = "";
   String response = '';

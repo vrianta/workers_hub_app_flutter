@@ -5,8 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wo1/ApiHandler/api_handler.dart';
 import 'package:wo1/Pages/Authentication/Components/text_fields.dart';
-import 'package:wo1/Pages/UserHome/home.dart';
 import 'package:wo1/Pages/Authentication/Pages/register_ui.dart';
+import 'package:wo1/Pages/pages_main.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -71,6 +71,9 @@ class _LoginState extends State<Login> {
     await apiHandler.login(userName, password);
     var responseObj = jsonDecode(apiHandler.response);
 
+    if (!responseObj["SUCCESS"]) {
+      showToast("Some issue", Colors.red);
+    }
     if (responseObj["CODE"] == "RELOGIN") {
       await apiHandler.login(userName, password);
       responseObj = jsonDecode(apiHandler.response);
@@ -95,9 +98,10 @@ class _LoginState extends State<Login> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => Home(
+        builder: (context) => PagesMain(
           userDetails: ApiHandler.userDetails,
           isActivated: ApiHandler.isActivated,
+          accountType: ApiHandler.accountType,
         ),
       ),
     );

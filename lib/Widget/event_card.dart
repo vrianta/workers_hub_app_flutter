@@ -176,7 +176,8 @@ Widget eventCard(Event event, Function(Event) showEventDetails) {
   );
 }
 
-Widget appliedEventCard(Event event, Function(Event) showEventDetails) {
+Widget appliedEventCard(
+    Event event, Function(Event) showEventDetails, int isConfirmed) {
   return GestureDetector(
     onTap: () {
       Fluttertoast.showToast(
@@ -189,12 +190,12 @@ Widget appliedEventCard(Event event, Function(Event) showEventDetails) {
       showEventDetails(event);
     },
     child: Padding(
-      padding: EdgeInsets.only(left: 10, right: 10),
+      padding: EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
       child: Card(
         color: Colors.white,
-        elevation: 2,
+        elevation: 0,
         child: Padding(
-          padding: EdgeInsets.all(15),
+          padding: EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 10),
           child: Column(
             spacing: 5,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,6 +260,10 @@ Widget appliedEventCard(Event event, Function(Event) showEventDetails) {
                   ),
                 ],
               ),
+              Container(
+                height: 5,
+                color: isConfirmed == 1 ? Colors.greenAccent : Colors.redAccent,
+              )
             ],
           ),
         ),

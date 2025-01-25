@@ -72,8 +72,8 @@ class _AllEventsViewState extends State<AllEventsView> {
           }
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Container(
-              height: MediaQuery.of(context).size.height,
+            child: SizedBox(
+              // height: MediaQuery.of(context).size.height,
               child: ListView.separated(
                 controller: widget.listViewController,
                 shrinkWrap: true,

@@ -1,82 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:wo1/Alerts/one_exit.dart';
-import 'package:wo1/APIHandler/api_handler.dart';
+import 'package:wo1/ApiHandler/api_handler.dart';
 import 'package:wo1/Models/user_details.dart';
 import 'package:wo1/Pages/Authentication/Pages/login_ui.dart';
-import 'package:wo1/Pages/UserHome/Components/buttom_navigation.dart';
-import 'package:wo1/Pages/UserHome/Fragments/Accounts/Page/accounts_details_edite.dart';
-import 'package:wo1/Pages/UserHome/Fragments/Home/home_fragment.dart';
-import 'package:wo1/Pages/UserHome/Fragments/Accounts/accounts_fragment.dart';
-import 'package:wo1/Pages/UserHome/Fragments/Dashboard/dashboard_fragment.dart';
+import 'package:wo1/Pages/BuisnessHome/buisiness_home.dart';
 import 'package:wo1/Pages/UserHome/Components/Notifications/notifications_fragment.dart';
-import 'package:wo1/Pages/UserActivationRequest/user_activation_request.dart';
+import 'package:wo1/Pages/UserHome/Fragments/Accounts/Page/accounts_details_edite.dart';
+import 'package:wo1/Pages/UserHome/home.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key, required this.userDetails, required this.isActivated});
+class PagesMain extends StatefulWidget {
+  const PagesMain({
+    super.key,
+    required this.userDetails,
+    required this.isActivated,
+    required this.accountType,
+  });
 
   final UserDetails userDetails;
   final String isActivated;
+  final String accountType;
 
   @override
-  State<Home> createState() => _HomeState();
+  State<PagesMain> createState() => _PagesMainState();
 }
 
-class _HomeState extends State<Home> {
-  int currentIndex = 0;
+class _PagesMainState extends State<PagesMain> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  late final HomeFragment homeFragment;
-  late final DashboardFragement dashboardFragement;
-  late final NotificationsFragment notificationsFragment;
-  late final AccountsFragment accountsFragement;
-
-  dynamic pageToShow;
-
-  @override
-  void initState() {
-    homeFragment = HomeFragment();
-    dashboardFragement = DashboardFragement();
-    notificationsFragment = NotificationsFragment();
-    accountsFragement = AccountsFragment(isBusinessUser: false);
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (widget.isActivated == "0") {
-      return UserNotActivated(userDetails: widget.userDetails);
-    }
-    return body();
-  }
-
-  Scaffold body() {
-    return Scaffold(
-      key: _scaffoldKey,
-      // appBar: appBar(),
-      // drawer: drawer(),
-      body: PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (c, result) async => {exitConfirmation()},
-        child: IndexedStack(
-          index: currentIndex,
-          children: [
-            homeFragment,
-            dashboardFragement,
-            // notificationsFragment,
-            // accountsFragement,
-          ],
-        ),
-      ),
-      bottomNavigationBar: ButtomNavigation(
-        currentIndex: currentIndex,
-        onTabSelected: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
-      ),
-    );
-  }
 
   Drawer drawer() {
     return Drawer(
@@ -155,27 +103,7 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
-          ListTile(
-            leading: Icon(Icons.home_outlined),
-            title: Text('Home'),
-            onTap: () {
-              Navigator.pop(context);
-              setState(() {
-                currentIndex = 0;
-              });
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.dashboard_outlined),
-            title: Text('Applied Events'),
-            onTap: () {
-              Navigator.pop(context);
-              setState(() {
-                currentIndex = 1;
-              });
-            },
-          ),
-          Divider(),
+          // Divider(),
           ListTile(
             leading: Icon(Icons.logout),
             title: Text('Logout'),
@@ -232,19 +160,21 @@ class _HomeState extends State<Home> {
     );
   }
 
-  // Exit confirmation dialog
-  void exitConfirmation() {
-    if (currentIndex > 0) {
-      setState(() {
-        currentIndex = 0;
-      });
-      return;
+  Widget body() {
+    if (widget.accountType == "user") {
+      return Home(
+          userDetails: widget.userDetails, isActivated: widget.isActivated);
     }
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return const AlertOnExit();
-      },
+    return BuinsessHome();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: appBar(),
+      drawer: drawer(),
+      body: body(),
     );
   }
 }
