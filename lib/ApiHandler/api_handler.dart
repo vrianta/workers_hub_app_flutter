@@ -81,11 +81,37 @@ class ApiHandler {
   }
 
   // Create event method
-  Future<void> createEvent() async {
+  Future<String> createEvent({
+    required String eventName,
+    required String eventType,
+    required String requirement,
+    required String budget,
+    required String minHeight,
+    required String minRating,
+    required String minAge,
+    required String date,
+    required String time,
+    required String foodProvided,
+    required String language,
+    required String location,
+  }) async {
     await _initResponse("create-event", {
       "uid": uid,
       "token": api_token,
+      "eventName": eventName,
+      "type": eventType,
+      "requirement": requirement.toString(),
+      "budget": budget.toString(),
+      "minHeight": minHeight,
+      "minRating": minRating.toString(),
+      "minAge": minAge.toString(),
+      "date": date,
+      "time": time,
+      "foodProvided": foodProvided.toString(),
+      "language": language,
+      "location": location,
     });
+    return response;
   }
 
   // Get contents method

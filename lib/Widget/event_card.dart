@@ -180,13 +180,6 @@ Widget appliedEventCard(
     Event event, Function(Event) showEventDetails, int isConfirmed) {
   return GestureDetector(
     onTap: () {
-      Fluttertoast.showToast(
-        msg: "Opening event details...",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.black54,
-        textColor: Colors.white,
-      );
       showEventDetails(event);
     },
     child: Padding(

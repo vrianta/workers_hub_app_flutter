@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Event {
   final String eventID;
   final String eventName; // New property
@@ -15,6 +17,15 @@ class Event {
   final String ownerID;
   final int confirmed;
 
+  static final Map<String, Image> eventCategories = {
+    "birthday": Image.asset("lib/assets/images/birthday.jpg"),
+    "meeting": Image.asset("lib/assets/images/meeting.jpg"),
+    "conference": Image.asset("lib/assets/images/conference.jpg"),
+    "event": Image.asset("lib/assets/images/event.jpg"),
+    "party": Image.asset("lib/assets/images/party.webp"),
+    "music": Image.asset("lib/assets/images/music.jpeg"),
+    "marriage": Image.asset("lib/assets/images/marriage.jpg"),
+  };
   Event({
     required this.eventID,
     required this.eventName, // New property

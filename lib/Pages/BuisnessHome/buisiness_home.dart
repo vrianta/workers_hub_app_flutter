@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wo1/Alerts/one_exit.dart';
+import 'package:wo1/Pages/BuisnessHome/create_event.dart';
 
 class BuinsessHome extends StatefulWidget {
   const BuinsessHome({super.key});
@@ -68,19 +69,14 @@ class _BuinsessHomeState extends State<BuinsessHome> {
 
   void createEvent() {
     // Add logic to navigate to the event creation screen
-    showDialog(
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Create Event'),
-          content:
-              const Text('This will navigate to the event creation screen.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Close'),
-            ),
-          ],
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          height: 600,
+          child: CreateEvent(),
         );
       },
     );
