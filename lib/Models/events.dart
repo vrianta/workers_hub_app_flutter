@@ -18,13 +18,34 @@ class Event {
   final int confirmed;
 
   static final Map<String, Image> eventCategories = {
-    "birthday": Image.asset("lib/assets/images/birthday.jpg"),
-    "meeting": Image.asset("lib/assets/images/meeting.jpg"),
-    "conference": Image.asset("lib/assets/images/conference.jpg"),
-    "event": Image.asset("lib/assets/images/event.jpg"),
-    "party": Image.asset("lib/assets/images/party.webp"),
-    "music": Image.asset("lib/assets/images/music.jpeg"),
-    "marriage": Image.asset("lib/assets/images/marriage.jpg"),
+    "birthday": Image.asset(
+      "lib/assets/images/birthday.jpg",
+      fit: BoxFit.cover,
+    ),
+    "meeting": Image.asset(
+      "lib/assets/images/meeting.jpg",
+      fit: BoxFit.cover,
+    ),
+    "conference": Image.asset(
+      "lib/assets/images/conference.jpg",
+      fit: BoxFit.cover,
+    ),
+    "event": Image.asset(
+      "lib/assets/images/event.jpg",
+      fit: BoxFit.cover,
+    ),
+    "party": Image.asset(
+      "lib/assets/images/party.webp",
+      fit: BoxFit.cover,
+    ),
+    "music": Image.asset(
+      "lib/assets/images/music.jpeg",
+      fit: BoxFit.cover,
+    ),
+    "marriage": Image.asset(
+      "lib/assets/images/marriage.jpg",
+      fit: BoxFit.cover,
+    ),
   };
   Event({
     required this.eventID,

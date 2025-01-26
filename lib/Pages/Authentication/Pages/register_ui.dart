@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:wo1/ApiHandler/api_handler.dart';
-import 'package:wo1/Pages/Authentication/Components/text_fields.dart'; // Import text fields
+import 'package:wo1/Pages/Authentication/Components/text_fields.dart';
+import 'package:wo1/Pages/Authentication/Pages/login_ui.dart'; // Import text fields
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -144,8 +145,8 @@ class _RegisterState extends State<Register> {
       setState(() {
         isOtpSent = true;
       });
-      _showToast("OTP sent to your ${email}",
-          Colors.green); // Open popup asking for OTP
+      _showToast(
+          "OTP sent to your $email", Colors.green); // Open popup asking for OTP
       return true;
     } else {
       _showToast(responseObj["MESSAGE"], Colors.red);
@@ -173,7 +174,13 @@ class _RegisterState extends State<Register> {
 
     if (responseObj["SUCCESS"]) {
       _showToast("Registered successfully", Colors.green);
-      Navigator.pop(context);
+      await storeCreds(aadhaar, password);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const Login(),
+        ),
+      );
     } else {
       _showToast(responseObj["MESSAGE"], Colors.red);
     }
@@ -219,5 +226,10 @@ class _RegisterState extends State<Register> {
         );
       },
     );
+  }
+
+  Future<void> storeCreds(String userName, String password) async {
+    await storage.write(key: "username", value: userName);
+    await storage.write(key: "password", value: password);
   }
 }

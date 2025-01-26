@@ -58,7 +58,7 @@ class _AllEventsViewState extends State<AllEventsView> {
             );
           } else if (snapshot.hasError) {
             return const Center(
-              child: Text("Error loading event types"),
+              child: Text("Error loading All Events"),
             );
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(

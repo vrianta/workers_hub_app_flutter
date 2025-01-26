@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:wo1/Models/events.dart';
-import 'package:wo1/Pages/EventsShow/details_of_event.dart';
+import 'package:wo1/Pages/UserHome/Fragments/Home/details_of_event.dart';
 import 'event_handler.dart';
 
 class ShowEventByType extends StatefulWidget {

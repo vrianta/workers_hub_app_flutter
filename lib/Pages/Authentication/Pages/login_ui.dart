@@ -208,7 +208,7 @@ class _LoginState extends State<Login> {
                       const SizedBox(height: 20),
                       TextButton(
                         onPressed: () {
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const Register()),

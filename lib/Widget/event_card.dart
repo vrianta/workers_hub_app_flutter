@@ -29,11 +29,7 @@ Widget eventCard(Event event, Function(Event) showEventDetails) {
           child: Stack(
             children: [
               Positioned.fill(
-                child: Image.asset(
-                  key: const Key("eventImage"),
-                  getCategoryImagePath(event.eventType),
-                  fit: BoxFit.cover,
-                ),
+                child: Event.eventCategories[event.eventType.toLowerCase()]!,
               ),
               Positioned.fill(
                 child: Container(
@@ -50,6 +46,16 @@ Widget eventCard(Event event, Function(Event) showEventDetails) {
                   ),
                 ),
               ),
+              // Positioned(
+              //   bottom: 0,
+              //   right: 0,
+              //   left: 0,
+              //   child: Container(
+              //     padding: EdgeInsets.zero,
+              //     height: 70,
+              //     color: Colors.white,
+              //   ),
+              // ),
               Positioned(
                 bottom: 8,
                 left: 8,
@@ -73,7 +79,7 @@ Widget eventCard(Event event, Function(Event) showEventDetails) {
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Color.fromARGB(190, 82, 106, 118),
+                                color: Colors.white,
                                 shadows: [
                                   Shadow(
                                     blurRadius: 10.0,
@@ -91,7 +97,7 @@ Widget eventCard(Event event, Function(Event) showEventDetails) {
                               event.eventDate,
                               style: const TextStyle(
                                 fontSize: 16,
-                                color: Color.fromARGB(190, 82, 106, 118),
+                                color: Colors.white,
                                 shadows: [
                                   Shadow(
                                     blurRadius: 10.0,
@@ -127,7 +133,7 @@ Widget eventCard(Event event, Function(Event) showEventDetails) {
                               event.eventLocation,
                               style: const TextStyle(
                                 fontSize: 16,
-                                color: Color.fromARGB(190, 82, 106, 118),
+                                color: Colors.white,
                                 shadows: [
                                   Shadow(
                                     blurRadius: 10.0,
@@ -145,7 +151,7 @@ Widget eventCard(Event event, Function(Event) showEventDetails) {
                               event.eventTime,
                               style: const TextStyle(
                                 fontSize: 16,
-                                color: Color.fromARGB(190, 82, 106, 118),
+                                color: Colors.white,
                                 shadows: [
                                   Shadow(
                                     blurRadius: 10.0,
