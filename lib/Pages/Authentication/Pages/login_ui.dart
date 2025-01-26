@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:wo1/Alerts/one_exit.dart';
 import 'package:wo1/ApiHandler/api_handler.dart';
 import 'package:wo1/Pages/Authentication/Components/text_fields.dart';
 import 'package:wo1/Pages/Authentication/Pages/register_ui.dart';
@@ -22,6 +23,8 @@ class _LoginState extends State<Login> {
 
   final String login = "Login";
 
+  final isPasswordVisible = ValueNotifier<bool>(false);
+
   @override
   void dispose() {
     userNameController.dispose();
@@ -40,7 +43,11 @@ class _LoginState extends State<Login> {
         if (snapshot.hasData && snapshot.data!) {
           return _buildEmptyScreen();
         }
-        return _buildLoginScreen(context);
+        return PopScope(
+          canPop: false,
+          child: _buildLoginScreen(context),
+          onPopInvokedWithResult: (c, result) async => {onExit()},
+        );
       },
     );
   }
@@ -189,7 +196,7 @@ class _LoginState extends State<Login> {
                       ),
                       const SizedBox(height: 20),
                       usernameTextField(userNameController),
-                      passwordTextField(passwordController),
+                      passwordTextField(passwordController, isPasswordVisible),
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: onpressedLoginButton,
@@ -236,6 +243,15 @@ class _LoginState extends State<Login> {
           ),
         ],
       ),
+    );
+  }
+
+  void onExit() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const AlertOnExit();
+      },
     );
   }
 }

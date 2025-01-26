@@ -24,6 +24,9 @@ class _RegisterState extends State<Register> {
   final TextEditingController otpController = TextEditingController();
   bool isOtpSent = false;
 
+  final isPasswordVisible = ValueNotifier<bool>(false);
+  final isConfirmedPasswordVisible = ValueNotifier(false);
+
   @override
   void dispose() {
     aadhaarController.dispose();
@@ -38,6 +41,14 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      child: _body(context),
+      onPopInvokedWithResult: (c, result) async => {onExit()},
+    );
+  }
+
+  Scaffold _body(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
@@ -76,10 +87,10 @@ class _RegisterState extends State<Register> {
                           aadhaarController), // Use aadhaar text field
                       emailTextField(emailController), // Use email text field
                       phoneTextField(phoneController), // Use phone text field
-                      passwordTextField(
-                          passwordController), // Use password text field
-                      confirmPasswordTextField(
-                          confirmPasswordController), // Use confirm password text field
+                      passwordTextField(passwordController,
+                          isPasswordVisible), // Use password text field
+                      confirmPasswordTextField(confirmPasswordController,
+                          isConfirmedPasswordVisible), // Use confirm password text field
                       // if (isOtpSent)
                       //   otpTextField(otpController), // Use OTP text field
                       const SizedBox(height: 20),
@@ -231,5 +242,14 @@ class _RegisterState extends State<Register> {
   Future<void> storeCreds(String userName, String password) async {
     await storage.write(key: "username", value: userName);
     await storage.write(key: "password", value: password);
+  }
+
+  onExit() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const Login(),
+      ),
+    );
   }
 }

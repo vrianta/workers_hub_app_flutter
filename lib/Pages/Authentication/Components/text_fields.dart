@@ -6,6 +6,9 @@ Widget customTextField({
   required IconData prefixIcon,
   bool obscureText = false,
   int maxLength = 50,
+  bool showPasswordToggle = false,
+  void Function()? onTogglePasswordVisibility,
+  bool isPasswordVisible = false,
 }) {
   return TextFormField(
     controller: controller,
@@ -17,6 +20,14 @@ Widget customTextField({
         borderRadius: BorderRadius.circular(10),
       ),
       prefixIcon: Icon(prefixIcon),
+      suffixIcon: showPasswordToggle
+          ? IconButton(
+              icon: Icon(
+                isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+              ),
+              onPressed: onTogglePasswordVisibility,
+            )
+          : null,
     ),
   );
 }
@@ -29,14 +40,51 @@ var usernameTextField =
           maxLength: 12,
         );
 
-var passwordTextField =
-    (TextEditingController passwordController) => customTextField(
+// Password TextField with "show/hide" toggle
+var passwordTextField = (
+  TextEditingController passwordController,
+  ValueNotifier<bool> isPasswordVisible,
+) =>
+    ValueListenableBuilder<bool>(
+      valueListenable: isPasswordVisible,
+      builder: (context, isVisible, child) {
+        return customTextField(
           controller: passwordController,
           labelText: 'Password',
           prefixIcon: Icons.lock,
-          obscureText: true,
+          obscureText: !isVisible,
           maxLength: 20,
+          showPasswordToggle: true,
+          isPasswordVisible: isVisible,
+          onTogglePasswordVisibility: () {
+            isPasswordVisible.value = !isVisible;
+          },
         );
+      },
+    );
+
+// Confirm Password TextField with "show/hide" toggle
+var confirmPasswordTextField = (
+  TextEditingController confirmPasswordController,
+  ValueNotifier<bool> isPasswordVisible,
+) =>
+    ValueListenableBuilder<bool>(
+      valueListenable: isPasswordVisible,
+      builder: (context, isVisible, child) {
+        return customTextField(
+          controller: confirmPasswordController,
+          labelText: 'Confirm Password',
+          prefixIcon: Icons.lock,
+          obscureText: !isVisible,
+          maxLength: 20,
+          showPasswordToggle: true,
+          isPasswordVisible: isVisible,
+          onTogglePasswordVisibility: () {
+            isPasswordVisible.value = !isVisible;
+          },
+        );
+      },
+    );
 
 var aadhaarTextField =
     (TextEditingController aadhaarController) => customTextField(
@@ -59,15 +107,6 @@ var phoneTextField = (TextEditingController phoneController) => customTextField(
       prefixIcon: Icons.phone,
       maxLength: 10,
     );
-
-var confirmPasswordTextField =
-    (TextEditingController confirmPasswordController) => customTextField(
-          controller: confirmPasswordController,
-          labelText: 'Confirm Password',
-          prefixIcon: Icons.lock,
-          obscureText: true,
-          maxLength: 20,
-        );
 
 var otpTextField = (TextEditingController otpController) => customTextField(
       controller: otpController,
