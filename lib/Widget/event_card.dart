@@ -271,6 +271,121 @@ Widget appliedEventCard(
   );
 }
 
+Widget allCreatedEventsCard(
+    Event event, Function(Event) showEventDetails, int isConfirmed) {
+  return GestureDetector(
+    onTap: () => showEventDetails(event),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: Card(
+        color: Colors.white,
+        elevation: 1, // Slight elevation for a better look
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12), // Rounded corners
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Event Name and Date
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.add_task_outlined,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        event.eventName,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        event.eventDate,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.calendar_today,
+                        color: Colors.deepPurpleAccent,
+                        size: 16,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              // Event Location and Time
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.location_on,
+                        size: 15,
+                        color: Colors.redAccent,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        event.eventLocation,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        event.eventTime,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.access_time,
+                        size: 16,
+                        color: Colors.deepPurpleAccent,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              // Status Indicator
+              Container(
+                height: 5,
+                decoration: BoxDecoration(
+                  color:
+                      isConfirmed == 1 ? Colors.greenAccent : Colors.redAccent,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
 String getCategoryImagePath(String eventType) {
   const Map<String, String> categoryImagePaths = {
     "birthday": "lib/assets/images/birthday.jpg",

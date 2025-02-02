@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wo1/Alerts/one_exit.dart';
-import 'package:wo1/Pages/BuisnessHome/create_event.dart';
+import 'package:wo1/Pages/BuisnessHome/create_event_handler.dart';
+import 'package:wo1/Pages/BuisnessHome/created_events_view.dart';
 
 class BuinsessHome extends StatefulWidget {
   const BuinsessHome({super.key});
@@ -42,6 +43,7 @@ class _BuinsessHomeState extends State<BuinsessHome> {
               ],
             ),
           ),
+          const CreatedEventsView(),
           Positioned(
             bottom: 20,
             right: 1,
@@ -76,7 +78,7 @@ class _BuinsessHomeState extends State<BuinsessHome> {
         return Container(
           padding: const EdgeInsets.all(16.0),
           height: 600,
-          child: CreateEvent(),
+          child: const CreateEvent(),
         );
       },
     );
