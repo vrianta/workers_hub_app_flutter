@@ -256,30 +256,34 @@ class _MainPage extends State<HomeFragment> {
   }
 
   void _listen() async {
-    if (!_isListening) {
-      bool available = await _speech.initialize(
-        onError: (val) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $val')),
-          );
-        },
-      );
-      if (available) {
-        setState(() => _isListening = true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Listening...')),
-        );
-        _speech.listen(
-          onResult: (val) => setState(() {
-            _searchText = val.recognizedWords;
-            textEditingController.text = _searchText;
-          }),
-        );
-      }
-    } else {
+    if (_isListening) {
       setState(() => _isListening = false);
       _speech.stop();
     }
+
+    bool available = await _speech.initialize(
+      onError: (val) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $val')),
+        );
+      },
+    );
+
+    if (!available) {
+      return;
+    }
+
+    setState(() => _isListening = true);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Listening...')),
+    );
+
+    _speech.listen(
+      onResult: (val) => setState(() {
+        _searchText = val.recognizedWords;
+        textEditingController.text = _searchText;
+      }),
+    );
   }
 
   void filterEvents() {

@@ -1,6 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:wo1/Pages/Authentication/Pages/login_ui.dart';
-import 'package:wo1/Pages/BuisnessHome/buisiness_home.dart';
 
 void main() {
   runApp(const ViewController());
@@ -12,6 +13,14 @@ class ViewController extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+//     try {
+//   final result = await InternetAddress.lookup('example.com');
+//   if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+//     print('connected');
+//   }
+// } on SocketException catch (_) {
+//   print('not connected');
+// }
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       showPerformanceOverlay: false, // Enable performance overlay

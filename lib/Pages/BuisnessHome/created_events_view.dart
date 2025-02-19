@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:wo1/ApiHandler/api_handler.dart';
 import 'package:wo1/Models/events.dart';
+import 'package:wo1/Pages/BuisnessHome/details_of_event_view.dart';
 import 'package:wo1/Widget/event_card.dart';
 
 class CreatedEventsView extends StatefulWidget {
@@ -52,25 +53,33 @@ class _CreatedEventsViewState extends State<CreatedEventsView> {
 
   Padding _body(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 20, right: 20),
+      padding: const EdgeInsets.only(left: 10, right: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Streamline Your Event",
-            style: TextStyle(
-              color: Theme.of(context).primaryColor,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Roboto',
-            ),
-          ),
-          Text(
-            "Make your events seamless and successful.",
-            style: TextStyle(
-              color: Theme.of(context).highlightColor,
-              fontSize: 14,
-              fontFamily: 'Roboto',
+          Padding(
+            padding: EdgeInsets.only(left: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Streamline Your Event",
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Roboto',
+                  ),
+                ),
+                Text(
+                  "Make your events seamless and successful.",
+                  style: TextStyle(
+                    color: Theme.of(context).highlightColor,
+                    fontSize: 14,
+                    fontFamily: 'Roboto',
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(
@@ -88,7 +97,10 @@ class _CreatedEventsViewState extends State<CreatedEventsView> {
                     );
                   } else if (snapshot.hasError) {
                     return const Center(
-                      child: Text("Error loading events"),
+                      child: SizedBox(
+                        height: 40,
+                        child: Text("Error loading events"),
+                      ),
                     );
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(
@@ -121,5 +133,8 @@ class _CreatedEventsViewState extends State<CreatedEventsView> {
     );
   }
 
-  _showDetailsofEvent(Event p1) {}
+  _showDetailsofEvent(Event p1) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => DetailsOfEventView(event: p1)));
+  }
 }

@@ -12,6 +12,8 @@ class UserDetails {
   int age;
   String gender;
 
+  bool isEmpty;
+
   UserDetails({
     required this.userId,
     required this.fullName,
@@ -25,9 +27,47 @@ class UserDetails {
     required this.height,
     required this.age,
     required this.gender,
+    this.isEmpty = false,
   });
 
-  Future<void> fromJson(Map<String, dynamic> json) async {
+  factory UserDetails.emptyObject() {
+    return UserDetails(
+        userId: "",
+        fullName: "",
+        email: "email",
+        phoneNumber: "",
+        photoUrl: "",
+        rating: 0,
+        experienceYear: 0,
+        workDone: 0,
+        dateOfBirth: "",
+        height: "",
+        age: 0,
+        gender: "",
+        isEmpty: true);
+  }
+
+  factory UserDetails.fromJson(Map<String, dynamic> json) {
+    if (json.isEmpty) {
+      return UserDetails.emptyObject();
+    }
+    return UserDetails(
+        userId: json['UserId'],
+        fullName: json['FullName'],
+        email: json['Email'],
+        phoneNumber: json['PhoneNumber'],
+        photoUrl: json['PhotoURL'],
+        rating: json['Rating'],
+        experienceYear: json['ExperienceYear'],
+        workDone: json['WorkDone'],
+        dateOfBirth: json['DateOfBirth'],
+        height: json['Height'],
+        age: json['Age'],
+        gender: json['Gender'],
+        isEmpty: false);
+  }
+
+  void set(Map<String, dynamic> json) {
     userId = json['UserId'];
     fullName = json['FullName'];
     email = json['Email'];
@@ -40,5 +80,6 @@ class UserDetails {
     height = json['Height'];
     age = json['Age'];
     gender = json['Gender'];
+    isEmpty = false;
   }
 }

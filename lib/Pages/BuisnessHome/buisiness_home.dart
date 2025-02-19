@@ -18,44 +18,23 @@ class _BuinsessHomeState extends State<BuinsessHome> {
       onPopInvokedWithResult: (c, result) async => {exitConfirmation()},
       child: Stack(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Streamline Your Event",
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Roboto',
-                  ),
-                ),
-                Text(
-                  "Make your events seamless and successful.",
-                  style: TextStyle(
-                    color: Theme.of(context).highlightColor,
-                    fontSize: 14,
-                    fontFamily: 'Roboto',
-                  ),
-                ),
-              ],
-            ),
-          ),
           const CreatedEventsView(),
-          Positioned(
-            bottom: 20,
-            right: 1,
-            child: FloatingActionButton(
-              onPressed: () {
-                createEvent();
-              },
-              backgroundColor: Theme.of(context).primaryColor,
-              child: const Icon(Icons.add, color: Colors.white),
-            ),
-          ),
+          addEventButton(context),
         ],
+      ),
+    );
+  }
+
+  Positioned addEventButton(BuildContext context) {
+    return Positioned(
+      bottom: 20,
+      right: 20,
+      child: FloatingActionButton(
+        onPressed: () {
+          createEvent();
+        },
+        backgroundColor: Theme.of(context).primaryColor,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

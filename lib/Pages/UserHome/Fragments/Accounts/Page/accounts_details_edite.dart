@@ -7,7 +7,7 @@ class UserDetailsPage extends StatefulWidget {
   const UserDetailsPage({super.key, required this.userDetails});
 
   @override
-  _UserDetailsPageState createState() => _UserDetailsPageState();
+  State<UserDetailsPage> createState() => _UserDetailsPageState();
 }
 
 class _UserDetailsPageState extends State<UserDetailsPage> {
@@ -51,7 +51,7 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
       isEditingEmail = false;
     });
     // Add your logic to update the email here
-    print("Updated Email: ${emailController.text.trim()}");
+    // print("Updated Email: ${emailController.text.trim()}");
   }
 
   @override

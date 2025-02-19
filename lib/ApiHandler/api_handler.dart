@@ -214,6 +214,24 @@ class ApiHandler {
     accountType = '';
   }
 
+  /**
+   * Return all the event realted information for the buisness owener
+   * return data will be
+   * Success : true
+   * CODE : EVENTPROGRESS
+   * Manager: manager details
+   * Recruitments: users who are recruited for the event
+  */
+  Future<String> getEventproress(String evnetid) async {
+    await _initResponse("get-event-assingments", {
+      "uid": uid,
+      "token": api_token,
+      "event_id": evnetid,
+    });
+
+    return response;
+  }
+
   // Private method to handle HTTP POST request
   Future<void> _initResponse(
       String apiMethod, Map<String, String> postDataMap) async {
