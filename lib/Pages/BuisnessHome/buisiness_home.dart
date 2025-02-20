@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wo1/Alerts/one_exit.dart';
 import 'package:wo1/Pages/BuisnessHome/create_event_handler.dart';
-import 'package:wo1/Pages/BuisnessHome/created_events_view.dart';
+import 'package:wo1/Pages/BuisnessHome/view_events_created_by_buisness.dart';
 
 class BuinsessHome extends StatefulWidget {
   const BuinsessHome({super.key});
@@ -18,14 +18,14 @@ class _BuinsessHomeState extends State<BuinsessHome> {
       onPopInvokedWithResult: (c, result) async => {exitConfirmation()},
       child: Stack(
         children: [
-          const CreatedEventsView(),
-          addEventButton(context),
+          const ViewEventsCreatedByBuisness(),
+          createEventButton(context),
         ],
       ),
     );
   }
 
-  Positioned addEventButton(BuildContext context) {
+  Positioned createEventButton(BuildContext context) {
     return Positioned(
       bottom: 20,
       right: 20,

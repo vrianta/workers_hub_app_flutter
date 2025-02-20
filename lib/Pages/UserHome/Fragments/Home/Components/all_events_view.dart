@@ -83,10 +83,13 @@ class _AllEventsViewState extends State<AllEventsView> {
                   return SizedBox(height: 10); // Changed back to height
                 },
                 itemBuilder: (context, index) {
-                  if (index == visibleEventCards.length) {
+                  if (index < visibleEventCards.length) {
+                    return visibleEventCards[index];
+                  }
+                  if (visibleEventCards.length >= 10) {
                     return _buildLoadMoreButton();
                   }
-                  return visibleEventCards[index];
+                  return Container();
                 },
               ),
             ),
@@ -113,7 +116,7 @@ class _AllEventsViewState extends State<AllEventsView> {
                   visibleEventCards.addAll(
                     newEventCards.sublist(
                       _lastShownIndex,
-                      min(newEventCards.length, _eventsToShow),
+                      min(newEventCards.length - 1, _eventsToShow),
                     ),
                   );
                   _isLoadingMore = false;

@@ -6,6 +6,7 @@ import 'package:wo1/Pages/UserHome/Fragments/Home/details_of_event.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Components/event_catagory_view.dart';
 import 'package:wo1/Models/events.dart';
 import 'package:wo1/Pages/UserHome/Fragments/Home/Handlers/event_handler.dart';
+import 'package:wo1/Pages/UserHome/Fragments/Home/search_events_page.dart';
 import 'package:wo1/Widget/catagory_textview.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
@@ -24,6 +25,7 @@ class _MainPage extends State<HomeFragment> {
 
   final ScrollController catagoryScrollController = ScrollController();
   final textEditingController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   late final UserDetails userDetails;
   late EventHandler events;
@@ -35,7 +37,6 @@ class _MainPage extends State<HomeFragment> {
 
   @override
   void initState() {
-    super.initState();
     userDetails = ApiHandler.userDetails;
     events = EventHandler(showEventDetails: showEventDetails);
     events.loadData();
@@ -45,6 +46,13 @@ class _MainPage extends State<HomeFragment> {
       refreshPage: refreshPage,
     );
     _speech = stt.SpeechToText();
+
+    // // Delay focus request to ensure it works properly
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _focusNode.descendantsAreFocusable = false;
+    // });
+
+    super.initState();
   }
 
   @override
@@ -145,23 +153,32 @@ class _MainPage extends State<HomeFragment> {
           ],
         ),
         child: TextField(
+          focusNode: _focusNode,
+          readOnly: true,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return SearchEventsPage();
+                },
+              ),
+            );
+          },
           decoration: InputDecoration(
-            prefixIcon: IconButton(
-              icon: Icon(Icons.mic_outlined,
-                  color: Theme.of(context).primaryColor),
-              onPressed: _listen,
+            prefixIcon: Icon(
+              Icons.mic_outlined,
+              color: Theme.of(context).primaryColor,
             ),
-            suffixIcon: IconButton(
-              icon: Icon(Icons.search_outlined,
-                  color: Theme.of(context).primaryColor),
-              onPressed: filterEvents,
+            suffixIcon: Icon(
+              Icons.search_outlined,
+              color: Theme.of(context).primaryColor,
             ),
             hintText: 'Search Events',
             border: InputBorder.none,
             contentPadding:
                 EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
           ),
-          controller: textEditingController,
         ),
       ),
     );
@@ -274,9 +291,11 @@ class _MainPage extends State<HomeFragment> {
     }
 
     setState(() => _isListening = true);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Listening...')),
-    );
+    setState(() {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Listening...')),
+      );
+    });
 
     _speech.listen(
       onResult: (val) => setState(() {

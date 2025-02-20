@@ -186,12 +186,14 @@ class _RegisterState extends State<Register> {
     if (responseObj["SUCCESS"]) {
       _showToast("Registered successfully", Colors.green);
       await storeCreds(aadhaar, password);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const Login(),
-        ),
-      );
+      setState(() {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Login(),
+          ),
+        );
+      });
     } else {
       _showToast(responseObj["MESSAGE"], Colors.red);
     }

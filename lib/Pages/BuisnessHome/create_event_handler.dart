@@ -419,10 +419,12 @@ class _CreateEventState extends State<CreateEvent> {
     );
 
     Map<String, dynamic> resposeObj = jsonDecode(respose);
-    if (resposeObj.entries.isEmpty) {
+    if (resposeObj["CODE"] == "FAILEDTOCREATEEVENT") {
       setState(() {
         isCreateInitiated = false;
       });
+
+      Fluttertoast.showToast(msg: resposeObj["MESSAGE"]);
       return;
     }
 
@@ -439,8 +441,9 @@ class _CreateEventState extends State<CreateEvent> {
     if (resposeObj["CODE"] == "EVENTCREATED") {
       setState(() {
         isCreateInitiated = false;
+        Navigator.pop(context);
       });
-      Navigator.pop(context);
+
       Fluttertoast.showToast(msg: "Event Created");
     }
   }

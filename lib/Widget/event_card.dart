@@ -271,7 +271,8 @@ Widget appliedEventCard(
   );
 }
 
-Widget allCreatedEventsCard(
+// When the Buisness owner will look at it's created events this how he will see the
+Widget cardViewforBuisnessOwners(
     Event event, Function(Event) showEventDetails, int isConfirmed) {
   return GestureDetector(
     onTap: () => showEventDetails(event),

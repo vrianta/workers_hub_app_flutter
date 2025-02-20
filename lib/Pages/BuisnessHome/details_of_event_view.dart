@@ -1,7 +1,4 @@
-// ignore_for_file: unnecessary_null_comparison
-
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:wo1/ApiHandler/api_handler.dart';
@@ -28,7 +25,8 @@ class _DetailsOfEventViewState extends State<DetailsOfEventView> {
   }
 
   Future<Map<String, dynamic>> getEventProgress() async {
-    String response = await apiHandler.getEventproress(widget.event.eventID);
+    String response =
+        await apiHandler.getEventsCreatedByBuisness(widget.event.eventID);
 
     Map<String, dynamic> responseObj = jsonDecode(response);
     if (!responseObj["SUCCESS"]) {
@@ -54,11 +52,17 @@ class _DetailsOfEventViewState extends State<DetailsOfEventView> {
               return const Center(
                 child: SizedBox(
                   height: 40,
-                  child: Text("Error loading Data for the event"),
+                  child: Text(
+                      "Your Event is not Activated Yet wait for manager assignment and he is talk to you for the farhter steps"),
                 ),
               );
             }
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(
+                child: Text("No Manager Has assinged to your event"),
+              );
+            }
+            if (snapshot.data!["SUCCESS"] == false) {
               return const Center(
                 child: Text("No Manager Has assinged to your event"),
               );

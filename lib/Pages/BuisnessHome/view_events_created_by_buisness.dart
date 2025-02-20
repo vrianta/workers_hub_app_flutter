@@ -6,17 +6,19 @@ import 'package:wo1/Models/events.dart';
 import 'package:wo1/Pages/BuisnessHome/details_of_event_view.dart';
 import 'package:wo1/Widget/event_card.dart';
 
-class CreatedEventsView extends StatefulWidget {
-  const CreatedEventsView({
+class ViewEventsCreatedByBuisness extends StatefulWidget {
+  const ViewEventsCreatedByBuisness({
     super.key,
   });
   @override
-  State<CreatedEventsView> createState() => _CreatedEventsViewState();
+  State<ViewEventsCreatedByBuisness> createState() =>
+      _ViewEventsCreatedByBuisnessState();
 }
 
-class _CreatedEventsViewState extends State<CreatedEventsView> {
+class _ViewEventsCreatedByBuisnessState
+    extends State<ViewEventsCreatedByBuisness> {
   late ApiHandler apiHandler;
-  late final CreatedEventsView createdEventView;
+  late final ViewEventsCreatedByBuisness createdEventView;
   late Future<List<Event>> allCreatedEvents;
   @override
   void initState() {
@@ -118,8 +120,8 @@ class _CreatedEventsViewState extends State<CreatedEventsView> {
                         scrollDirection: Axis.vertical,
                         itemCount: eventCards.length,
                         itemBuilder: (context, index) {
-                          return allCreatedEventsCard(
-                              eventCards[index], _showDetailsofEvent, 1);
+                          return cardViewforBuisnessOwners(eventCards[index],
+                              _showDetailsofEvent, eventCards[index].confirmed);
                         },
                       ),
                     ),

@@ -83,7 +83,7 @@ class Event {
       eventLanguage: json['language'],
       eventLocation: json['location'],
       ownerID: json['owner_id'],
-      confirmed: json['Confirmed'],
+      confirmed: json['confirmed'],
     );
   }
 }

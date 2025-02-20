@@ -182,12 +182,14 @@ class _HomeState extends State<Home> {
             onTap: () async {
               Navigator.pop(context);
               await ApiHandler().logout();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Login(),
-                ),
-              );
+              setState(() {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Login(),
+                  ),
+                );
+              });
             },
           ),
         ],

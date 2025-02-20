@@ -110,12 +110,14 @@ class _PagesMainState extends State<PagesMain> {
             onTap: () async {
               Navigator.pop(context);
               await ApiHandler().logout();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Login(),
-                ),
-              );
+              setState(() {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Login(),
+                  ),
+                );
+              });
             },
           ),
         ],
